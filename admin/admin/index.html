@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KGFF PANEL — Admin Dashboard</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  background: #0a0b0f;
+  color: #e0e0e6;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111219; }
+::-webkit-scrollbar-thumb { background: #FF3366; border-radius: 3px; }
+input, textarea, select, button { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* LOGIN */
+.login-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  background: #0a0b0f;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.4s, visibility 0.4s;
+  padding: 20px;
+}
+.login-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.login-box {
+  background: #12131a;
+  border: 1px solid #1e1f2e;
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 100%; max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(255,51,102,0.08);
+}
+.login-box .brand {
+  font-size: 28px; font-weight: 800;
+  background: linear-gradient(135deg, #FF3366, #ff6b9d);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+.login-box .subtitle { color: #666; font-size: 13px; margin-bottom: 32px; }
+.login-field {
+  width: 100%; padding: 14px 16px;
+  background: #0d0e14; border: 1px solid #1e1f2e;
+  border-radius: 10px; color: #e0e0e6;
+  font-size: 14px; margin-bottom: 14px;
+  outline: none; transition: border-color 0.3s;
+}
+.login-field:focus { border-color: #FF3366; }
+.login-field::placeholder { color: #444; }
+.login-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #FF3366, #cc1a4a);
+  border: none; border-radius: 10px;
+  color: #fff; font-size: 15px; font-weight: 700;
+  cursor: pointer; margin-top: 6px;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,51,102,0.35); }
+.login-error { color: #FF3366; font-size: 13px; margin-top: 14px; min-height: 20px; }
+
+/* DASHBOARD */
+.dashboard { display: flex; min-height: 100vh; }
+.dashboard.hidden { display: none; }
+
+.sidebar {
+  width: 260px; min-height: 100vh;
+  background: #0d0e14;
+  border-right: 1px solid #1a1b26;
+  display: flex; flex-direction: column;
+  position: fixed; left: 0; top: 0; bottom: 0;
+  z-index: 900;
+  transition: transform 0.3s;
+}
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid #1a1b26;
+}
+.sidebar-brand h1 {
+  font-size: 22px; font-weight: 800;
+  background: linear-gradient(135deg, #FF3366, #ff6b9d);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sidebar-brand span { font-size: 11px; color: #555; display: block; margin-top: 2px; }
+.sidebar-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+.nav-section { padding: 0 20px; margin-bottom: 8px; }
+.nav-section-title {
+  font-size: 10px; font-weight: 700;
+  color: #444; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px; padding-left: 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; border-radius: 10px;
+  font-size: 14px; color: #888;
+  cursor: pointer; transition: all 0.25s;
+  margin-bottom: 2px; user-select: none;
+}
+.nav-item:hover { background: #15161e; color: #ccc; }
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(255,51,102,0.12), rgba(255,51,102,0.05));
+  color: #FF3366; font-weight: 600;
+  border: 1px solid rgba(255,51,102,0.15);
+}
+.nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+.nav-item .nav-ext { margin-left: auto; font-size: 11px; color: #555; }
+.sidebar-footer {
+  padding: 16px 20px; border-top: 1px solid #1a1b26;
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar-footer .avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #FF3366, #cc1a4a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff;
+}
+.sidebar-footer .user-info { flex: 1; }
+.sidebar-footer .user-info .name { font-size: 13px; font-weight: 600; color: #ddd; }
+.sidebar-footer .user-info .role { font-size: 11px; color: #555; }
+.logout-btn {
+  background: none; border: none; color: #555;
+  cursor: pointer; font-size: 18px; padding: 4px;
+  transition: color 0.2s;
+}
+.logout-btn:hover { color: #FF3366; }
+
+.main-content {
+  flex: 1; margin-left: 260px;
+  min-height: 100vh;
+}
+.top-header {
+  padding: 24px 32px 20px;
+  border-bottom: 1px solid #1a1b26;
+  background: #0d0e14;
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.top-header h2 { font-size: 22px; font-weight: 700; color: #eee; }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.header-btn {
+  padding: 8px 16px; border-radius: 8px;
+  border: 1px solid #1e1f2e; background: #12131a;
+  color: #aaa; font-size: 13px; cursor: pointer;
+  transition: all 0.25s;
+}
+.header-btn:hover { border-color: #FF3366; color: #FF3366; }
+.mobile-menu-btn {
+  display: none; background: none; border: none;
+  color: #eee; font-size: 24px; cursor: pointer;
+}
+
+.page-section { padding: 28px 32px; }
+.page-section.hidden-section { display: none; }
+
+.settings-card {
+  background: #12131a;
+  border: 1px solid #1e1f2e;
+  border-radius: 14px;
+  padding: 24px; margin-bottom: 20px;
+}
+.settings-card h3 { font-size: 16px; font-weight: 700; color: #eee; margin-bottom: 4px; }
+.settings-card .desc { font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.5; }
+.input-row { display: flex; gap: 12px; align-items: center; }
+.input-row input {
+  flex: 1; padding: 12px 16px;
+  background: #0d0e14; border: 1px solid #1e1f2e;
+  border-radius: 10px; color: #e0e0e6; font-size: 14px;
+  outline: none; transition: border-color 0.3s;
+}
+.input-row input:focus { border-color: #FF3366; }
+.btn-save {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #FF3366, #cc1a4a);
+  border: none; border-radius: 10px;
+  color: #fff; font-size: 14px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(255,51,102,0.3); }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 20px 0 20px 0;
+}
+.section-header h3 { font-size: 18px; font-weight: 700; color: #eee; }
+.btn-add {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #FF3366, #cc1a4a);
+  border: none; border-radius: 10px;
+  color: #fff; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: transform 0.2s;
+}
+.btn-add:hover { transform: translateY(-1px); }
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+.cat-card {
+  background: #12131a;
+  border: 1px solid #1e1f2e;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex; flex-direction: column;
+  transition: border-color 0.3s;
+}
+.cat-card:hover { border-color: rgba(255,51,102,0.25); }
+.cat-card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.cat-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: #1a1b26; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; overflow: hidden; flex-shrink: 0;
+}
+.cat-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.cat-info { flex: 1; min-width: 0; }
+.cat-info h4 { font-size: 15px; font-weight: 600; color: #ddd; }
+.cat-info span { font-size: 12px; color: #555; word-break: break-all; }
+.cat-card-actions { display: flex; gap: 8px; margin-top: auto; flex-wrap: wrap; align-items: center; }
+.btn-manage, .btn-edit-box {
+  padding: 8px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.25s;
+  border: 1px solid #1e1f2e; background: #0d0e14; color: #aaa;
+}
+.btn-manage:hover, .btn-edit-box:hover { border-color: #FF3366; color: #FF3366; }
+.toggle-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.toggle-label { font-size: 11px; color: #555; font-weight: 600; }
+.toggle-switch {
+  position: relative; width: 42px; height: 22px;
+  background: #1e1f2e; border-radius: 12px;
+  cursor: pointer; transition: background 0.3s;
+  border: 1px solid #2a2b38;
+}
+.toggle-switch.on {
+  background: linear-gradient(135deg, #FF3366, #cc1a4a);
+  border-color: #FF3366;
+  box-shadow: 0 0 12px rgba(255,51,102,0.3);
+}
+.toggle-switch .toggle-knob {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform 0.3s;
+}
+.toggle-switch.on .toggle-knob { transform: translateX(20px); }
+
+/* MODALS */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 5000;
+  background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  padding: 20px;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-box {
+  background: #12131a; border: 1px solid #1e1f2e;
+  border-radius: 16px; padding: 32px;
+  width: 100%; max-width: 520px;
+  max-height: 85vh; overflow-y: auto;
+}
+.modal-box h3 { font-size: 18px; font-weight: 700; color: #eee; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: #888; margin-bottom: 6px;
+}
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 14px;
+  background: #0d0e14; border: 1px solid #1e1f2e;
+  border-radius: 10px; color: #e0e0e6; font-size: 14px;
+  outline: none; transition: border-color 0.3s;
+}
+.form-group input:focus, .form-group select:focus { border-color: #FF3366; }
+.modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+.btn-modal-cancel {
+  padding: 10px 20px; border-radius: 10px;
+  border: 1px solid #1e1f2e; background: #0d0e14;
+  color: #aaa; font-size: 14px; cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-modal-cancel:hover { border-color: #FF3366; color: #FF3366; }
+
+.items-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.items-header .back-link {
+  font-size: 13px; color: #FF3366; cursor: pointer;
+  font-weight: 600; transition: opacity 0.2s;
+}
+.items-header .back-link:hover { opacity: 0.8; }
+.items-header h3 { font-size: 18px; font-weight: 700; color: #eee; }
+
+.item-table {
+  width: 100%; border-collapse: collapse;
+  background: #12131a; border-radius: 14px; overflow: hidden;
+  border: 1px solid #1e1f2e;
+}
+.item-table thead { background: #0d0e14; }
+.item-table th {
+  padding: 14px 18px; text-align: left;
+  font-size: 12px; font-weight: 700;
+  color: #555; text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 1px solid #1e1f2e;
+}
+.item-table td {
+  padding: 14px 18px; font-size: 14px; color: #ccc;
+  border-bottom: 1px solid #111219;
+  vertical-align: middle;
+}
+.item-table tr:last-child td { border-bottom: none; }
+.item-table .item-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  object-fit: cover; background: #1a1b26;
+}
+.item-actions { display: flex; gap: 8px; }
+.btn-item-edit, .btn-item-del {
+  padding: 6px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1px solid #1e1f2e; background: #0d0e14;
+  color: #aaa; transition: all 0.25s;
+}
+.btn-item-edit:hover { border-color: #3b82f6; color: #3b82f6; }
+.btn-item-del:hover { border-color: #FF3366; color: #FF3366; }
+
+.pricing-tiers { margin-top: 12px; }
+.tier-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 10px; align-items: center; margin-bottom: 10px;
+}
+.tier-row input { padding: 10px 12px; }
+.btn-remove-tier {
+  background: none; border: none; color: #555;
+  font-size: 18px; cursor: pointer; padding: 4px;
+  transition: color 0.2s;
+}
+.btn-remove-tier:hover { color: #FF3366; }
+.btn-add-tier {
+  padding: 8px 16px; border-radius: 8px;
+  border: 1px dashed #2a2b38; background: transparent;
+  color: #555; font-size: 13px; cursor: pointer;
+  transition: all 0.25s; margin-top: 4px;
+}
+.btn-add-tier:hover { border-color: #FF3366; color: #FF3366; }
+
+.notif-list, .admin-list { margin-top: 16px; }
+.notif-item, .admin-item {
+  background: #12131a; border: 1px solid #1e1f2e;
+  border-radius: 10px; padding: 16px;
+  margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.notif-item .notif-text { flex: 1; font-size: 14px; color: #ccc; }
+.notif-item .notif-date { font-size: 11px; color: #555; margin-left: 12px; white-space: nowrap; }
+.admin-item .admin-info { flex: 1; }
+.admin-item .admin-name { font-size: 14px; font-weight: 600; color: #ddd; }
+.admin-item .admin-role { font-size: 12px; color: #555; }
+
+.toast-container {
+  position: fixed; top: 20px; right: 20px;
+  z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  padding: 14px 20px; border-radius: 10px;
+  background: #1a1b26; border: 1px solid #FF3366;
+  color: #eee; font-size: 13px; font-weight: 500;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  animation: toastIn 0.3s ease;
+  max-width: 340px;
+}
+.toast.success { border-color: #22c55e; }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .mobile-menu-btn { display: block; }
+  .top-header { padding: 18px 20px; }
+  .page-section { padding: 20px; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .tier-row { grid-template-columns: 1fr 1fr; }
+  .item-table { display: block; overflow-x: auto; }
+  .modal-box { padding: 24px 20px; }
+}
+@media (max-width: 480px) {
+  .input-row { flex-direction: column; }
+  .input-row input { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="brand">KGFF PANEL</div>
+    <div class="subtitle">Admin Dashboard Login</div>
+    <input type="text" class="login-field" id="loginUser" placeholder="Username" autocomplete="off">
+    <input type="password" class="login-field" id="loginPass" placeholder="Password">
+    <button class="login-btn" id="loginBtn">Sign In</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard hidden" id="dashboard">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h1>KGFF PANEL</h1>
+      <span>Admin Dashboard v1.0</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main Menu</div>
+        <div class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Website Control</div>
+        <a class="nav-item" href="../index.html">
+          <span class="nav-icon">🌐</span> Visit Site <span class="nav-ext">↗</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Tools</div>
+        <a class="nav-item" href="https://imgbb.com/" target="_blank">
+          <span class="nav-icon">🖼️</span> ImgBB <span class="nav-ext">↗</span>
+        </a>
+        <a class="nav-item" href="https://postimages.org/" target="_blank">
+          <span class="nav-icon">📷</span> PostImages <span class="nav-ext">↗</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Page Panels</div>
+        <div class="nav-item" data-page="manage-pc">
+          <span class="nav-icon">🖥️</span> Manage PC Panel
+        </div>
+        <div class="nav-item" data-page="manage-mobile">
+          <span class="nav-icon">📱</span> Manage Mobile Panel
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">System</div>
+        <div class="nav-item" data-page="notifications">
+          <span class="nav-icon">🔔</span> Notifications
+        </div>
+        <div class="nav-item" data-page="admin-users">
+          <span class="nav-icon">👤</span> Admin Users
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar">A</div>
+      <div class="user-info">
+        <div class="name" id="currentAdminName">Admin</div>
+        <div class="role">Super Admin</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Logout">⏻</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      <h2 id="pageTitle">Overview Dashboard</h2>
+      <div class="header-actions">
+        <button class="header-btn" id="refreshBtn">↻ Refresh</button>
+      </div>
+    </header>
+
+    <!-- PAGE: DASHBOARD -->
+    <div class="page-section" id="page-dashboard">
+
+      <!-- Discord Link -->
+      <div class="settings-card">
+        <h3>🔗 Global Discord Settings</h3>
+        <p class="desc">Update the Discord link here and it will change automatically across all pages of your main website.</p>
+        <div class="input-row">
+          <input type="text" id="discordLinkInput" placeholder="https://discord.gg/..." />
+          <button class="btn-save" id="saveDiscordBtn">Save Link</button>
+        </div>
+      </div>
+
+      <!-- Top-Up Link -->
+      <div class="settings-card">
+        <h3>💎 Global Top-Up Website Settings</h3>
+        <p class="desc">Update the Free Fire diamond top-up website link. This changes the "Free Fire Diamond Topup →" button on your main site's homepage hero.</p>
+        <div class="input-row">
+          <input type="text" id="topupLinkInput" placeholder="https://codashop.com/..." />
+          <button class="btn-save" id="saveTopupBtn">Save Link</button>
+        </div>
+      </div>
+
+      <!-- Website Categories -->
+      <div class="section-header">
+        <h3>Website Categories</h3>
+        <button class="btn-add" id="addCategoryBtn">+ Add New Box</button>
+      </div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <!-- PAGE: MANAGE PC PANEL -->
+    <div class="page-section hidden-section" id="page-manage-pc">
+      <div class="items-header">
+        <span class="back-link" data-back="dashboard">← Back</span>
+        <h3>Manage PC Panel Items</h3>
+      </div>
+      <div class="section-header">
+        <div></div>
+        <button class="btn-add" id="addPcItemBtn">+ Add Item</button>
+      </div>
+      <table class="item-table" id="pcItemTable">
+        <thead>
+          <tr><th>Icon</th><th>Panel Name</th><th>Tiers</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="pcItemBody"></tbody>
+      </table>
+    </div>
+
+    <!-- PAGE: MANAGE MOBILE PANEL -->
+    <div class="page-section hidden-section" id="page-manage-mobile">
+      <div class="items-header">
+        <span class="back-link" data-back="dashboard">← Back</span>
+        <h3>Manage Mobile Panel Items</h3>
+      </div>
+      <div class="section-header">
+        <div></div>
+        <button class="btn-add" id="addMobileItemBtn">+ Add Item</button>
+      </div>
+      <table class="item-table" id="mobileItemTable">
+        <thead>
+          <tr><th>Icon</th><th>Panel Name</th><th>Tiers</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="mobileItemBody"></tbody>
+      </table>
+    </div>
+
+    <!-- PAGE: NOTIFICATIONS -->
+    <div class="page-section hidden-section" id="page-notifications">
+      <div class="items-header">
+        <span class="back-link" data-back="dashboard">← Back</span>
+        <h3>Notifications</h3>
+      </div>
+      <div class="section-header">
+        <div></div>
+        <button class="btn-add" id="addNotifBtn">+ Add Notification</button>
+      </div>
+      <div class="notif-list" id="notifList"></div>
+    </div>
+
+    <!-- PAGE: ADMIN USERS -->
+    <div class="page-section hidden-section" id="page-admin-users">
+      <div class="items-header">
+        <span class="back-link" data-back="dashboard">← Back</span>
+        <h3>Admin Users</h3>
+      </div>
+      <div class="section-header">
+        <div></div>
+        <button class="btn-add" id="addAdminBtn">+ Add Admin</button>
+      </div>
+      <div class="admin-list" id="adminList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="editCatModal">
+  <div class="modal-box">
+    <h3>Edit Category</h3>
+    <input type="hidden" id="editCatIndex" />
+    <div class="form-group">
+      <label>Category Title</label>
+      <input type="text" id="editCatTitle" placeholder="e.g., Free Fire APK" />
+    </div>
+    <div class="form-group">
+      <label>Icon / Image URL</label>
+      <input type="text" id="editCatIcon" placeholder="https://... or emoji like 🎮" />
+    </div>
+    <div class="form-group">
+      <label>Link Page</label>
+      <input type="text" id="editCatLink" placeholder="e.g., free-fire-apk.html" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" data-close="editCatModal">Cancel</button>
+      <button class="btn-save" id="saveCatBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addCatModal">
+  <div class="modal-box">
+    <h3>Add New Category</h3>
+    <div class="form-group">
+      <label>Category Title</label>
+      <input type="text" id="addCatTitle" placeholder="e.g., New Panel" />
+    </div>
+    <div class="form-group">
+      <label>Icon / Image URL</label>
+      <input type="text" id="addCatIconUrl" placeholder="https://... or emoji like 🎮" />
+    </div>
+    <div class="form-group">
+      <label>Link Page</label>
+      <input type="text" id="addCatLinkUrl" placeholder="e.g., new-page.html" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" data-close="addCatModal">Cancel</button>
+      <button class="btn-save" id="saveNewCatBtn">Add Category</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="itemModal">
+  <div class="modal-box">
+    <h3 id="itemModalTitle">Add Item</h3>
+    <input type="hidden" id="itemEditType" />
+    <input type="hidden" id="itemEditIndex" />
+    <div class="form-group">
+      <label>Panel Name</label>
+      <input type="text" id="itemName" placeholder="e.g., BALA MODS - NON ROOT" />
+    </div>
+    <div class="form-group">
+      <label>Image File / URL</label>
+      <input type="text" id="itemImage" placeholder="images/bala-mods.png or https://..." />
+    </div>
+    <div class="form-group">
+      <label>Pricing Tiers</label>
+      <div class="pricing-tiers" id="pricingTiers"></div>
+      <button class="btn-add-tier" id="addTierBtn">+ Add Tier</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" data-close="itemModal">Cancel</button>
+      <button class="btn-save" id="saveItemBtn">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="notifModal">
+  <div class="modal-box">
+    <h3>Add Notification</h3>
+    <div class="form-group">
+      <label>Message</label>
+      <input type="text" id="notifMessage" placeholder="Enter notification text..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" data-close="notifModal">Cancel</button>
+      <button class="btn-save" id="saveNotifBtn">Add</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-box">
+    <h3 id="adminModalTitle">Add Admin User</h3>
+    <input type="hidden" id="adminEditIndex" />
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="adminUsername" placeholder="Enter username" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="adminPassword" placeholder="Enter password" />
+    </div>
+    <div class="form-group">
+      <label>Role</label>
+      <select id="adminRole">
+        <option value="Super Admin">Super Admin</option>
+        <option value="Editor">Editor</option>
+        <option value="Viewer">Viewer</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" data-close="adminModal">Cancel</button>
+      <button class="btn-save" id="saveAdminBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const KEYS = {
+    token: 'kgff_admin_token',
+    discord: 'kgff_discord_link',
+    topup: 'kgff_topup_link',
+    catMeta: 'kgff_category_meta',
+    pcPanels: 'kgff_pc_panels',
+    mobilePanels: 'kgff_mobile_panels',
+    notifications: 'kgff_notifications',
+    adminUsers: 'kgff_admin_users',
+  };
+
+  const DEFAULT_DISCORD = 'https://discord.gg/NZsbZq4C7';
+  const DEFAULT_TOPUP = 'https://codashop.com/';
+
+  const DEFAULT_CATEGORIES = [
+    { id: 'freefire-apk', title: 'Free Fire APK', icon: '📦', link: 'free-fire-apk.html', visible: true },
+    { id: 'emulator', title: 'Emulator', icon: '🖥️', link: 'emulator.html', visible: true },
+    { id: 'free-bypass', title: 'Free Bypass', icon: '🔓', link: 'free-bypass.html', visible: true },
+    { id: 'free-panel', title: 'Free Panel', icon: '🎮', link: 'free-panel.html', visible: true },
+    { id: 'paid-mobile', title: 'Paid Mobile Panels', icon: '📱', link: 'paid-mobile-panel.html', visible: true },
+    { id: 'paid-pc', title: 'Paid PC Panels', icon: '💻', link: 'pc-paid-panel.html', visible: true },
+  ];
+
+  const DEFAULT_PC_PANELS = [
+    { name: 'BR MODS [ PARSONAL ]', image: 'images/br-mods.png', tiers: [{ duration: '1 Months', price: 1100, original: '' }, { duration: '7 Days', price: 400, original: '' }, { duration: '1 Days', price: 150, original: '' }] },
+    { name: 'BR MODS [ GLOBAL ]', image: 'images/br-mods.png', tiers: [{ duration: '1 Months', price: 1100, original: '' }, { duration: '7 Days', price: 400, original: '' }, { duration: '1 Days', price: 150, original: '' }] },
+    { name: 'BASIC PANEL', image: 'images/basic-panel.png', tiers: [{ duration: '1 Months', price: 1100, original: '' }, { duration: '7 Days', price: 400, original: '' }, { duration: '1 Days', price: 150, original: '' }] },
+    { name: 'BR MODS [ DUSTU AIMKILL ]', image: 'images/br-mods.png', tiers: [{ duration: '1 Months', price: 1100, original: '' }, { duration: '7 Days', price: 400, original: '' }, { duration: '1 Days', price: 150, original: '' }] },
+    { name: 'ABCD PANEL (NON ROOT)', image: 'images/abcd-panel.png', tiers: [{ duration: '1 Months', price: 1100, original: '' }, { duration: '7 Days', price: 400, original: '' }, { duration: '1 Days', price: 150, original: '' }] },
+    { name: 'AIM HACK - ANDROID - IOS', image: 'images/aim-hack.png', tiers: [{ duration: '1 Months', price: 1100, original: '' }, { duration: '7 Days', price: 400, original: '' }, { duration: '1 Days', price: 150, original: '' }] },
+    { name: 'PREMIUM PANEL', image: 'images/premium-panel.png', tiers: [{ duration: 'Lifetime', price: 2000, original: '' }, { duration: '1 Months', price: 450, original: '' }, { duration: '7 Days', price: 150, original: '' }, { duration: '1 Days', price: 100, original: '' }] },
+  ];
+
+  const DEFAULT_MOBILE_PANELS = [
+    { name: 'BALA MODS - NON ROOT', image: 'images/bala-mods.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'DRIP WIRE ANDROID EXTERNAL', image: 'images/drip-wire.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'PHANTOM-AIMHACK', image: 'images/phantom.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'X REG NON ROOT', image: 'images/x-reg.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'DRIP CLIENT APK NON ROOT', image: 'images/drip-client.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'PRIME MOD ANDROID PANEL', image: 'images/prime-mod.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'ABCD PANEL (NON ROOT)', image: 'images/abcd-panel.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'AIM HACK - ANDROID - IOS', image: 'images/aim-hack.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'TROLL MODZ ANDROID & IOS', image: 'images/troll-modz.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+    { name: 'HG CHEAT APK - NON ROOT', image: 'images/hg-cheat.png', tiers: [{ duration: '1 Months', price: 1100, original: '1500' }, { duration: '7 Days', price: 400, original: '600' }, { duration: '1 Days', price: 150, original: '250' }] },
+  ];
+
+  const DEFAULT_ADMINS = [{ username: 'admin', password: 'admin123', role: 'Super Admin' }];
+
+  function load(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch { return fallback; }
+  }
+  function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+  function $(sel) { return document.querySelector(sel); }
+  function $$(sel) { return document.querySelectorAll(sel); }
+
+  function toast(msg, type = '') {
+    const c = $('#toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast' + (type ? ' ' + type : '');
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add('active'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+  function ensureDefaults() {
+    if (!localStorage.getItem(KEYS.discord)) save(KEYS.discord, DEFAULT_DISCORD);
+    if (!localStorage.getItem(KEYS.topup)) save(KEYS.topup, DEFAULT_TOPUP);
+    if (!localStorage.getItem(KEYS.catMeta)) save(KEYS.catMeta, DEFAULT_CATEGORIES);
+    if (!localStorage.getItem(KEYS.pcPanels)) save(KEYS.pcPanels, DEFAULT_PC_PANELS);
+    if (!localStorage.getItem(KEYS.mobilePanels)) save(KEYS.mobilePanels, DEFAULT_MOBILE_PANELS);
+    if (!localStorage.getItem(KEYS.notifications)) save(KEYS.notifications, []);
+    if (!localStorage.getItem(KEYS.adminUsers)) save(KEYS.adminUsers, DEFAULT_ADMINS);
+  }
+
+  function checkAuth() {
+    const token = localStorage.getItem(KEYS.token);
+    if (token) {
+      $('#loginScreen').classList.add('hidden');
+      $('#dashboard').classList.remove('hidden');
+      const admins = load(KEYS.adminUsers, DEFAULT_ADMINS);
+      const current = admins.find(a => btoa(a.username) === token);
+      if (current) $('#currentAdminName').textContent = current.username;
+      return true;
+    }
+    return false;
+  }
+
+  function doLogin() {
+    const u = $('#loginUser').value.trim();
+    const p = $('#loginPass').value;
+    const admins = load(KEYS.adminUsers, DEFAULT_ADMINS);
+    const match = admins.find(a => a.username === u && a.password === p);
+    if (match) {
+      localStorage.setItem(KEYS.token, btoa(match.username));
+      $('#loginScreen').classList.add('hidden');
+      $('#dashboard').classList.remove('hidden');
+      $('#currentAdminName').textContent = match.username;
+      toast('Welcome back, ' + match.username + '!', 'success');
+    } else {
+      $('#loginError').textContent = 'Invalid username or password.';
+    }
+  }
+
+  function doLogout() {
+    localStorage.removeItem(KEYS.token);
+    location.reload();
+  }
+
+  let currentPage = 'dashboard';
+
+  function showPage(page) {
+    currentPage = page;
+    $$('.page-section').forEach(s => s.classList.add('hidden-section'));
+    const el = $(`#page-${page}`);
+    if (el) el.classList.remove('hidden-section');
+
+    $$('.nav-item[data-page]').forEach(n => {
+      n.classList.toggle('active', n.dataset.page === page);
+    });
+
+    const titles = {
+      'dashboard': 'Overview Dashboard',
+      'manage-pc': 'Manage PC Panel',
+      'manage-mobile': 'Manage Mobile Panel',
+      'notifications': 'Notifications',
+      'admin-users': 'Admin Users',
+    };
+    $('#pageTitle').textContent = titles[page] || 'Dashboard';
+
+    if (page === 'manage-pc') renderItems('pc');
+    if (page === 'manage-mobile') renderItems('mobile');
+    if (page === 'notifications') renderNotifications();
+    if (page === 'admin-users') renderAdminUsers();
+    if (page === 'dashboard') { renderCategories(); loadGlobalLinks(); }
+
+    $('#sidebar').classList.remove('open');
+  }
+
+  function loadGlobalLinks() {
+    $('#discordLinkInput').value = load(KEYS.discord, DEFAULT_DISCORD);
+    $('#topupLinkInput').value = load(KEYS.topup, DEFAULT_TOPUP);
+  }
+  function saveDiscordLink() {
+    const val = $('#discordLinkInput').value.trim();
+    if (!val) { toast('Please enter a valid Discord link.'); return; }
+    save(KEYS.discord, val);
+    toast('Discord link saved successfully!', 'success');
+  }
+  function saveTopupLink() {
+    const val = $('#topupLinkInput').value.trim();
+    if (!val) { toast('Please enter a valid Top-Up link.'); return; }
+    save(KEYS.topup, val);
+    toast('Top-Up link saved successfully!', 'success');
+  }
+
+  function getCategories() { return load(KEYS.catMeta, DEFAULT_CATEGORIES); }
+  function saveCategories(cats) { save(KEYS.catMeta, cats); }
+
+  function renderCategories() {
+    const cats = getCategories();
+    const grid = $('#catGrid');
+    grid.innerHTML = '';
+
+    cats.forEach((cat, idx) => {
+      const card = document.createElement('div');
+      card.className = 'cat-card';
+      const isUrl = cat.icon && (cat.icon.startsWith('http') || cat.icon.startsWith('images/'));
+      const iconHtml = isUrl ? `<img src="${cat.icon}" alt="${cat.title}" />` : cat.icon || '📁';
+
+      card.innerHTML = `
+        <div class="cat-card-top">
+          <div class="cat-icon">${iconHtml}</div>
+          <div class="cat-info">
+            <h4>${cat.title}</h4>
+            <span>${cat.link || 'No page linked'}</span>
+          </div>
+        </div>
+        <div class="cat-card-actions">
+          <button class="btn-manage" data-manage-cat="${idx}">Manage Items</button>
+          <button class="btn-edit-box" data-edit-cat="${idx}">Edit Box</button>
+          <div class="toggle-wrap">
+            <span class="toggle-label">${cat.visible ? 'ON' : 'OFF'}</span>
+            <div class="toggle-switch ${cat.visible ? 'on' : ''}" data-toggle-cat="${idx}">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    $$('[data-toggle-cat]').forEach(sw => {
+      sw.addEventListener('click', () => {
+        const i = parseInt(sw.dataset.toggleCat);
+        const cats = getCategories();
+        cats[i].visible = !cats[i].visible;
+        saveCategories(cats);
+        renderCategories();
+        toast(`${cats[i].title} is now ${cats[i].visible ? 'visible' : 'hidden'}.`, 'success');
+      });
+    });
+
+    $$('[data-edit-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.editCat);
+        const cats = getCategories();
+        $('#editCatIndex').value = i;
+        $('#editCatTitle').value = cats[i].title;
+        $('#editCatIcon').value = cats[i].icon || '';
+        $('#editCatLink').value = cats[i].link || '';
+        openModal('editCatModal');
+      });
+    });
+
+    $$('[data-manage-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.manageCat);
+        const cats = getCategories();
+        const cat = cats[i];
+        if (cat.id === 'paid-pc' || cat.link === 'pc-paid-panel.html') {
+          showPage('manage-pc');
+        } else if (cat.id === 'paid-mobile' || cat.link === 'paid-mobile-panel.html') {
+          showPage('manage-mobile');
+        } else {
+          toast(`Item management for "${cat.title}" is edited directly in its HTML file. Full dynamic management is available for Paid PC and Paid Mobile panels.`);
+        }
+      });
+    });
+  }
+
+  function saveCategoryEdit() {
+    const i = parseInt($('#editCatIndex').value);
+    const cats = getCategories();
+    cats[i].title = $('#editCatTitle').value.trim() || cats[i].title;
+    cats[i].icon = $('#editCatIcon').value.trim() || cats[i].icon;
+    cats[i].link = $('#editCatLink').value.trim() || cats[i].link;
+    saveCategories(cats);
+    closeModal('editCatModal');
+    renderCategories();
+    toast('Category updated!', 'success');
+  }
+
+  function addNewCategory() {
+    const title = $('#addCatTitle').value.trim();
+    const icon = $('#addCatIconUrl').value.trim();
+    const link = $('#addCatLinkUrl').value.trim();
+    if (!title) { toast('Please enter a category title.'); return; }
+    const cats = getCategories();
+    cats.push({
+      id: 'custom-' + Date.now(),
+      title, icon: icon || '📁', link: link || '#', visible: true
+    });
+    saveCategories(cats);
+    closeModal('addCatModal');
+    $('#addCatTitle').value = '';
+    $('#addCatIconUrl').value = '';
+    $('#addCatLinkUrl').value = '';
+    renderCategories();
+    toast('New category added!', 'success');
+  }
+
+  function getPanels(type) {
+    const key = type === 'pc' ? KEYS.pcPanels : KEYS.mobilePanels;
+    const def = type === 'pc' ? DEFAULT_PC_PANELS : DEFAULT_MOBILE_PANELS;
+    return load(key, def);
+  }
+  function savePanels(type, data) {
+    save(type === 'pc' ? KEYS.pcPanels : KEYS.mobilePanels, data);
+  }
+
+  function renderItems(type) {
+    const panels = getPanels(type);
+    const bodyId = type === 'pc' ? 'pcItemBody' : 'mobileItemBody';
+    const tbody = $(`#${bodyId}`);
+    tbody.innerHTML = '';
+
+    panels.forEach((item, idx) => {
+      const tr = document.createElement('tr');
+      const isUrl = item.image && (item.image.startsWith('http') || item.image.startsWith('images/'));
+      const imgSrc = isUrl ? (item.image.startsWith('images/') ? '../' + item.image : item.image) : '';
+      const imgHtml = imgSrc
+        ? `<img class="item-icon" src="${imgSrc}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect fill=%22%231a1b26%22 width=%2236%22 height=%2236%22 rx=%228%22/><text x=%2218%22 y=%2224%22 text-anchor=%22middle%22 fill=%22%23555%22 font-size=%2216%22>?</text></svg>'" />`
+        : `<div class="item-icon" style="display:flex;align-items:center;justify-content:center;background:#1a1b26;font-size:18px;">🎮</div>`;
+
+      const tiersSummary = item.tiers.map(t => {
+        let s = `${t.duration}: ৳${t.price}`;
+        if (t.original) s += ` <del style="color:#555">৳${t.original}</del>`;
+        return s;
+      }).join(', ');
+
+      tr.innerHTML = `
+        <td>${imgHtml}</td>
+        <td style="font-weight:600;color:#ddd;">${item.name}</td>
+        <td style="font-size:12px;color:#888;max-width:280px;">${tiersSummary}</td>
+        <td>
+          <div class="item-actions">
+            <button class="btn-item-edit" data-edit-item="${type}-${idx}">Edit</button>
+            <button class="btn-item-del" data-del-item="${type}-${idx}">Delete</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    $$(`[data-edit-item^="${type}-"]`).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.editItem.split('-').pop());
+        openItemModal(type, idx);
+      });
+    });
+
+    $$(`[data-del-item^="${type}-"]`).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.delItem.split('-').pop());
+        if (confirm('Delete this item?')) {
+          const panels = getPanels(type);
+          panels.splice(idx, 1);
+          savePanels(type, panels);
+          renderItems(type);
+          toast('Item deleted.', 'success');
+        }
+      });
+    });
+  }
+
+  function openItemModal(type, idx) {
+    const isNew = idx === undefined || idx === null;
+    const panels = getPanels(type);
+    const item = isNew ? { name: '', image: '', tiers: [{ duration: '', price: '', original: '' }] } : panels[idx];
+
+    $('#itemModalTitle').textContent = isNew ? 'Add Item' : 'Edit Item';
+    $('#itemEditType').value = type;
+    $('#itemEditIndex').value = isNew ? 'new' : idx;
+    $('#itemName').value = item.name;
+    $('#itemImage').value = item.image;
+
+    renderTierRows(item.tiers);
+    openModal('itemModal');
+  }
+
+  function renderTierRows(tiers) {
+    const container = $('#pricingTiers');
+    container.innerHTML = '';
+    tiers.forEach((tier, i) => {
+      const row = document.createElement('div');
+      row.className = 'tier-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Duration" value="${tier.duration || ''}" />
+        <input type="number" placeholder="Price (৳)" value="${tier.price || ''}" />
+        <input type="number" placeholder="Original (৳)" value="${tier.original || ''}" />
+        <button class="btn-remove-tier" data-remove-tier="${i}">✕</button>
+      `;
+      container.appendChild(row);
+    });
+
+    $$('[data-remove-tier]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tiers = collectTiers();
+        const ri = parseInt(btn.dataset.removeTier);
+        tiers.splice(ri, 1);
+        if (tiers.length === 0) tiers.push({ duration: '', price: '', original: '' });
+        renderTierRows(tiers);
+      });
+    });
+  }
+
+  function collectTiers() {
+    const rows = $$('#pricingTiers .tier-row');
+    const tiers = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      tiers.push({
+        duration: inputs[0].value.trim(),
+        price: inputs[1].value.trim(),
+        original: inputs[2].value.trim()
+      });
+    });
+    return tiers;
+  }
+
+  function saveItem() {
+    const type = $('#itemEditType').value;
+    const idxStr = $('#itemEditIndex').value;
+    const name = $('#itemName').value.trim();
+    const image = $('#itemImage').value.trim();
+    const tiers = collectTiers().filter(t => t.duration && t.price);
+
+    if (!name) { toast('Please enter a panel name.'); return; }
+    if (tiers.length === 0) { toast('Please add at least one pricing tier.'); return; }
+
+    const panels = getPanels(type);
+    const item = { name, image, tiers };
+
+    if (idxStr === 'new') panels.push(item);
+    else panels[parseInt(idxStr)] = item;
+
+    savePanels(type, panels);
+    closeModal('itemModal');
+    renderItems(type);
+    toast('Item saved successfully!', 'success');
+  }
+
+  function getNotifications() { return load(KEYS.notifications, []); }
+  function saveNotifications(n) { save(KEYS.notifications, n); }
+
+  function renderNotifications() {
+    const notifs = getNotifications();
+    const list = $('#notifList');
+    list.innerHTML = '';
+    if (notifs.length === 0) {
+      list.innerHTML = '<p style="color:#555;font-size:14px;">No notifications yet.</p>';
+      return;
+    }
+    notifs.forEach((n, idx) => {
+      const item = document.createElement('div');
+      item.className = 'notif-item';
+      item.innerHTML = `
+        <span class="notif-text">${n.message}</span>
+        <span class="notif-date">${n.date || ''}</span>
+        <button class="btn-item-del" data-del-notif="${idx}">✕</button>
+      `;
+      list.appendChild(item);
+    });
+    $$('[data-del-notif]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.delNotif);
+        const notifs = getNotifications();
+        notifs.splice(i, 1);
+        saveNotifications(notifs);
+        renderNotifications();
+        toast('Notification deleted.', 'success');
+      });
+    });
+  }
+
+  function addNotification() {
+    const msg = $('#notifMessage').value.trim();
+    if (!msg) { toast('Please enter a message.'); return; }
+    const notifs = getNotifications();
+    notifs.unshift({ message: msg, date: new Date().toLocaleDateString() });
+    saveNotifications(notifs);
+    closeModal('notifModal');
+    $('#notifMessage').value = '';
+    renderNotifications();
+    toast('Notification added!', 'success');
+  }
+
+  function getAdmins() { return load(KEYS.adminUsers, DEFAULT_ADMINS); }
+  function saveAdmins(a) { save(KEYS.adminUsers, a); }
+
+  function renderAdminUsers() {
+    const admins = getAdmins();
+    const list = $('#adminList');
+    list.innerHTML = '';
+    admins.forEach((a, idx) => {
+      const item = document.createElement('div');
+      item.className = 'admin-item';
+      item.innerHTML = `
+        <div class="admin-info">
+          <div class="admin-name">${a.username}</div>
+          <div class="admin-role">${a.role}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-item-edit" data-edit-admin="${idx}">Edit</button>
+          ${admins.length > 1 ? `<button class="btn-item-del" data-del-admin="${idx}">Delete</button>` : ''}
+        </div>
+      `;
+      list.appendChild(item);
+    });
+
+    $$('[data-edit-admin]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.editAdmin);
+        const admins = getAdmins();
+        $('#adminModalTitle').textContent = 'Edit Admin User';
+        $('#adminEditIndex').value = i;
+        $('#adminUsername').value = admins[i].username;
+        $('#adminPassword').value = admins[i].password;
+        $('#adminRole').value = admins[i].role;
+        openModal('adminModal');
+      });
+    });
+
+    $$('[data-del-admin]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.delAdmin);
+        if (confirm('Delete this admin user?')) {
+          const admins = getAdmins();
+          admins.splice(i, 1);
+          saveAdmins(admins);
+          renderAdminUsers();
+          toast('Admin user deleted.', 'success');
+        }
+      });
+    });
+  }
+
+  function saveAdminUser() {
+    const idxStr = $('#adminEditIndex').value;
+    const username = $('#adminUsername').value.trim();
+    const password = $('#adminPassword').value;
+    const role = $('#adminRole').value;
+
+    if (!username || !password) { toast('Please fill in username and password.'); return; }
+
+    const admins = getAdmins();
+    const user = { username, password, role };
+
+    if (idxStr !== '' && idxStr !== 'new') {
+      admins[parseInt(idxStr)] = user;
+    } else {
+      if (admins.find(a => a.username === username)) {
+        toast('Username already exists.'); return;
+      }
+      admins.push(user);
+    }
+
+    saveAdmins(admins);
+    closeModal('adminModal');
+    renderAdminUsers();
+    toast('Admin user saved!', 'success');
+  }
+
+  function bindEvents() {
+    $('#loginBtn').addEventListener('click', doLogin);
+    $('#loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    $('#loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') $('#loginPass').focus(); });
+
+    $('#logoutBtn').addEventListener('click', doLogout);
+
+    $('#mobileMenuBtn').addEventListener('click', () => {
+      $('#sidebar').classList.toggle('open');
+    });
+
+    $$('.nav-item[data-page]').forEach(item => {
+      item.addEventListener('click', () => showPage(item.dataset.page));
+    });
+
+    $$('[data-back]').forEach(link => {
+      link.addEventListener('click', () => showPage(link.dataset.back));
+    });
+
+    $('#saveDiscordBtn').addEventListener('click', saveDiscordLink);
+    $('#saveTopupBtn').addEventListener('click', saveTopupLink);
+
+    $('#refreshBtn').addEventListener('click', () => {
+      showPage(currentPage);
+      toast('Refreshed!', 'success');
+    });
+
+    $('#addCategoryBtn').addEventListener('click', () => openModal('addCatModal'));
+    $('#saveNewCatBtn').addEventListener('click', addNewCategory);
+    $('#saveCatBtn').addEventListener('click', saveCategoryEdit);
+
+    $('#addPcItemBtn').addEventListener('click', () => openItemModal('pc'));
+    $('#addMobileItemBtn').addEventListener('click', () => openItemModal('mobile'));
+
+    $('#addTierBtn').addEventListener('click', () => {
+      const tiers = collectTiers();
+      tiers.push({ duration: '', price: '', original: '' });
+      renderTierRows(tiers);
+    });
+
+    $('#saveItemBtn').addEventListener('click', saveItem);
+
+    $('#addNotifBtn').addEventListener('click', () => openModal('notifModal'));
+    $('#saveNotifBtn').addEventListener('click', addNotification);
+
+    $('#addAdminBtn').addEventListener('click', () => {
+      $('#adminModalTitle').textContent = 'Add Admin User';
+      $('#adminEditIndex').value = 'new';
+      $('#adminUsername').value = '';
+      $('#adminPassword').value = '';
+      $('#adminRole').value = 'Editor';
+      openModal('adminModal');
+    });
+    $('#saveAdminBtn').addEventListener('click', saveAdminUser);
+
+    $$('[data-close]').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.dataset.close));
+    });
+
+    $$('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', e => {
+      const sidebar = $('#sidebar');
+      const menuBtn = $('#mobileMenuBtn');
+      if (sidebar.classList.contains('open') &&
+          !sidebar.contains(e.target) &&
+          !menuBtn.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    });
+  }
+
+  function init() {
+    ensureDefaults();
+    bindEvents();
+    if (checkAuth()) {
+      showPage('dashboard');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>
