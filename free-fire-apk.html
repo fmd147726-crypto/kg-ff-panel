@@ -1,58 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Bypass - KGFF PANEL</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGFF PANEL - FREE BYPASS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body {
+            background-color: #05020a; color: #ffffff; min-height: 100vh; padding-bottom: 40px;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(157, 0, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(255, 0, 102, 0.08) 0%, transparent 40%);
+        }
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 5%;
+            background: rgba(10, 5, 18, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #1a0b2e;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .brand-logo img { width: 38px; height: 38px; border-radius: 8px; border: 1px solid #9d00ff; object-fit: cover; }
+        .brand-text h1 { font-size: 16px; font-weight: 800; color: #fff; line-height: 1.2; }
+        .brand-text span { font-size: 10px; color: #ff0066; letter-spacing: 1.5px; font-weight: 600; display: block; }
+        .nav-actions { display: flex; align-items: center; gap: 12px; }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05); color: #ccc; text-decoration: none;
+            padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1); display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+        .nav-btn.discord-btn { background: rgba(88, 101, 242, 0.15); border-color: rgba(88, 101, 242, 0.4); color: #5865F2; }
+        .main-container { max-width: 850px; margin: 25px auto; padding: 0 20px; }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px; background: #11071a; color: #ccc;
+            text-decoration: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+            border: 1px solid #2a113d; margin-bottom: 20px; transition: all 0.3s ease;
+        }
+        .btn-back:hover { background: #1a0b2b; color: #fff; border-color: #9d00ff; }
+        .video-box {
+            position: relative; width: 100%; height: 420px; background: #0d0614;
+            border: 1px solid #2a113d; border-radius: 12px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .yt-card {
+            width: 100%; height: 100%; background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center; text-decoration: none; position: relative;
+        }
+        .yt-card::before { content: ''; position: absolute; inset: 0; background: rgba(5, 2, 10, 0.4); }
+        .play-btn-circle {
+            width: 70px; height: 70px; background: rgba(255, 0, 102, 0.9); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px; z-index: 2;
+            box-shadow: 0 0 25px rgba(255, 0, 102, 0.8); transition: all 0.3s ease; padding-left: 4px;
+        }
+        .video-iframe { width: 100%; height: 100%; border: none; }
+        .video-placeholder { display: flex; flex-direction: column; align-items: center; color: #554866; gap: 12px; }
+        .title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; width: 100%; flex-wrap: wrap; gap: 15px;}
+        .section-title { font-size: 24px; font-weight: 800; color: #ffffff; text-transform: uppercase; margin-bottom: 4px; }
+        .section-subtitle { color: #77688a; font-size: 13px; text-transform: uppercase; margin: 0; }
+        .skip-btn {
+            background: transparent; color: #00cc66; border: 1px solid #00cc66;
+            padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(0, 204, 102, 0.2); margin-top: 2px;
+        }
+        .skip-btn:hover { background: #00cc66; color: #05020a; box-shadow: 0 0 20px rgba(0, 204, 102, 0.6); }
+        .rar-box { background: rgba(255, 153, 0, 0.04); border: 1px solid rgba(255, 153, 0, 0.3); border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; }
+        .rar-header { color: #ff9900; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; text-transform: uppercase; }
+        .rar-body { display: flex; justify-content: space-between; align-items: center; }
+        .rar-pass-val { font-size: 16px; font-weight: 700; color: #ffffff; }
+        .btn-copy { background: transparent; border: 1px solid #ff9900; color: #ff9900; padding: 6px 14px; border-radius: 5px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.3s; }
+        .btn-copy:hover { background: #ff9900; color: #11071a; }
+        .items-container { display: flex; flex-direction: column; gap: 12px; }
+        .item-card { background: #11071a; border: 1px solid #2a113d; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; flex-wrap: wrap; gap: 15px; }
+        .item-card:hover { border-color: #9d00ff; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(157, 0, 255, 0.15); }
+        .item-left { display: flex; align-items: center; gap: 15px; }
+        .item-icon { width: 44px; height: 44px; background: rgba(157, 0, 255, 0.1); border: 1px solid rgba(157, 0, 255, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9d00ff; font-size: 18px; }
+        .item-icon img { width: 24px; height: 24px; object-fit: contain; }
+        .badge-latest { background: #ff0066; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 4px; }
+        .btn-download { background: linear-gradient(135deg, #9d00ff 0%, #ff0066 100%); color: #fff; text-decoration: none; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 7px; }
+        .empty-state { background: #11071a; border: 1px dashed #2a113d; border-radius: 10px; padding: 40px; text-align: center; color: #66557a; font-size: 14px; }
+        @media (max-width: 600px) { 
+            .video-box { height: 230px; } 
+            .item-card { flex-direction: column; align-items: stretch; text-align: left; }
+            .btn-download { justify-content: center; }
+        }
+    </style>
 </head>
 <body>
 
-  <header class="top-bar">
-    <div class="top-bar-container">
-      <a href="index.html" class="back-link">&lt; BACK</a>
-      <div class="brand-logo">KGFF PANEL</div>
-      <a href="https://discord.gg/NZsbZq4C7" target="_blank" class="discord-top-btn" data-global-link="discord">💬 DISCORD</a>
+    <!-- Header -->
+    <nav class="navbar">
+        <a href="index.html" class="brand-logo">
+            <img src="images/free-bypass.png" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/888/888879.png'">
+            <div class="brand-text">
+                <h1>KGFF PANEL</h1>
+                <span>PREMIUM CORP</span>
+            </div>
+        </a>
+        <div class="nav-actions">
+            <a href="#" target="_blank" class="nav-btn discord-btn" id="nav-discord">
+                <i class="fab fa-discord"></i> DISCORD
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> GO BACK</a>
+
+        <div class="title-row">
+            <div>
+                <h2 class="section-title">FREE BYPASS DOWNLOADS</h2>
+                <p class="section-subtitle">SAFE MATCHMAKING FOR PC EMULATORS</p>
+            </div>
+            <a href="#" target="_blank" class="skip-btn" id="skip-link">
+                <i class="fas fa-question-circle"></i> HOW TO SKIP?
+            </a>
+        </div>
+
+        <!-- Video Box -->
+        <div class="video-box" id="video-container">
+            <!-- Dynamically loaded via LocalStorage -->
+        </div>
+
+        <!-- RAR Password -->
+        <div class="rar-box">
+            <div class="rar-header"><i class="fas fa-lock"></i> RAR ARCHIVE PASSWORD</div>
+            <div class="rar-body">
+                <span class="rar-pass-val" id="rar-pwd">1</span>
+                <button class="btn-copy" onclick="copyPassword(this)">
+                    <i class="far fa-copy"></i> COPY
+                </button>
+            </div>
+        </div>
+
+        <!-- Item Cards -->
+        <div class="items-container" id="items-grid">
+            <!-- Dynamically loaded via LocalStorage -->
+        </div>
+
     </div>
-  </header>
 
-  <main class="container">
-    <div class="section-header-row">
-      <div>
-        <h1 class="page-title">FREE BYPASS</h1>
-        <p class="section-subtitle">Bypass Emulator Detection Safely</p>
-      </div>
-      <a href="https://youtube.com" target="_blank" class="btn-how-to-skip">HOW TO SKIP LINK?</a>
-    </div>
+    <!-- Vanilla JS Logic for LocalStorage -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Sync Discord Link
+            const discord = localStorage.getItem('kgff_discord_link') || "https://discord.gg/NZsbZq4C7";
+            document.getElementById('nav-discord').href = discord;
 
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" title="Free Bypass Setup Guide" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      <div class="video-play-overlay">
-        <div class="video-play-btn"></div>
-      </div>
-    </div>
+            // 2. Sync Skip Link
+            const skipLink = localStorage.getItem('kgff_how_to_skip') || "https://youtube.com";
+            document.getElementById('skip-link').href = skipLink;
 
-    <div class="store-grid">
-      <div class="store-card">
-        <img src="images/free-bypass.png" alt="FREE BYPASS V2.0" class="store-card-icon" onerror="this.src='https://via.placeholder.com/45/FF3366/FFFFFF?text=BY';">
-        <h3 class="store-card-title">FREE BYPASS V2.0</h3>
-        <p class="store-card-desc">Matches you with mobile players while playing on PC emulators.</p>
-        <a href="https://drive.google.com" target="_blank" class="btn-action btn-download" data-panel-type="freeBypass">DOWNLOAD FILE</a>
-      </div>
-    </div>
+            // 3. Sync RAR Password
+            const rarPass = localStorage.getItem('kgff_rar_password') || "1";
+            document.getElementById('rar-pwd').innerText = rarPass;
 
-    <div class="rar-password-box">
-      <span class="rar-label">RAR FILE PASSWORD:</span>
-      <span class="rar-value" id="rar-pwd">1</span>
-      <button class="btn-copy-pwd" id="btn-copy-pwd">COPY PASSWORD</button>
-    </div>
-  </main>
+            // 4. Load Video with Custom Play Overlay
+            const videoUrl = localStorage.getItem('kgff_free_bypass_video') || "https://www.youtube.com/embed/dQw4w9WgXcQ";
+            const videoBox = document.getElementById('video-container');
+            
+            if (videoUrl && videoUrl.trim() !== "") {
+                const finalSrc = videoUrl.includes('?') ? `${videoUrl}&enablejsapi=1` : `${videoUrl}?enablejsapi=1`;
+                videoBox.innerHTML = `
+                    <iframe class="video-iframe" id="yt-iframe" src="${finalSrc}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <div class="yt-card" id="vid-overlay" style="position:absolute; top:0; left:0; cursor:pointer; width:100%; height:100%; z-index:10;">
+                        <div class="play-btn-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                `;
+                
+                document.getElementById('vid-overlay').addEventListener('click', function() {
+                    this.style.opacity = '0';
+                    setTimeout(() => { this.style.display = 'none'; }, 300);
+                    const iframe = document.getElementById('yt-iframe');
+                    iframe.src += "&autoplay=1";
+                });
+            } else {
+                videoBox.innerHTML = `
+                    <div class="video-placeholder">
+                        <i class="fas fa-video-slash fa-3x"></i>
+                        <p style="margin-top:10px; font-weight:600;">NO VIDEO AVAILABLE YET</p>
+                    </div>
+                `;
+            }
 
-  <footer class="footer">
-    <p>&copy; 2026 KGFF PANEL. All rights reserved.</p>
-  </footer>
+            // 5. Load Bypass Items Array
+            const defaultItems = [
+                { title: "FREE BYPASS V2.0", desc: "Matches you with mobile players while playing on PC emulators.", icon: "🔓", link: "https://drive.google.com" },
+                { title: "ANTI-BAN BYPASS", desc: "Latest OB55 Security Patch. Fully safe for main accounts.", icon: "🛡️", link: "https://drive.google.com" }
+            ];
+            
+            const storedItems = JSON.parse(localStorage.getItem('kgff_free_bypass_items'));
+            const itemsToRender = (storedItems && storedItems.length > 0) ? storedItems : defaultItems;
 
-  <script src="script.js"></script>
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+
+            itemsToRender.forEach((item, index) => {
+                const isLatest = index === 0 ? '<span class="badge-latest">LATEST</span>' : '';
+                grid.innerHTML += `
+                    <div class="item-card">
+                        <div class="item-left">
+                            <div class="item-icon">${renderIcon(item.icon)}</div>
+                            <div>
+                                <div style="color:#fff; font-size:14px; font-weight:700; margin-bottom:2px; display:flex; align-items:center; gap:8px;">
+                                    ${item.title} ${isLatest}
+                                </div>
+                                <div style="color:#77688a; font-size:11px;">${item.desc}</div>
+                            </div>
+                        </div>
+                        <a href="${item.link}" target="_blank" class="btn-download">
+                            DOWNLOAD <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                `;
+            });
+        });
+
+        // Helper: Render Icon (Emoji, FontAwesome, or Image)
+        function renderIcon(iconStr) {
+            if (!iconStr) return '<i class="fas fa-file-archive"></i>';
+            if (iconStr.includes('fa-')) return `<i class="${iconStr}"></i>`;
+            if (iconStr.endsWith('.png') || iconStr.endsWith('.jpg')) return `<img src="${iconStr}" alt="icon">`;
+            return `<span>${iconStr}</span>`;
+        }
+
+        // Copy Password function
+        function copyPassword(btn) {
+            const pwd = document.getElementById('rar-pwd').innerText;
+            navigator.clipboard.writeText(pwd).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fas fa-check"></i> COPIED`;
+                btn.style.color = "#00cc66";
+                btn.style.borderColor = "#00cc66";
+                btn.style.background = "rgba(0, 204, 102, 0.1)";
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.style.color = "";
+                    btn.style.borderColor = "";
+                    btn.style.background = "transparent";
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
