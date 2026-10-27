@@ -4,39 +4,39 @@ const freeBypassMaintenance = false;
 const pcPaidMaintenance = false;
 const mobilePaidMaintenance = false;
 
-// Cloud REST DB Settings for 2-Repo Sync
-const FIREBASE_REST_URL = localStorage.getItem('kgff_firebase_url') || "";
+// YOUR FIREBASE DATABASE URL
+const FIREBASE_URL = "https://kg-ff-panel-default-rtdb.firebaseio.com";
 
 document.addEventListener('DOMContentLoaded', () => {
-  initCloudSync();
-  applyGlobalLinks();
-  applyCategoryVisibility();
+  fetchCloudSettings();
   initVideoOverlays();
   initCopyButtons();
   initMaintenanceMode();
-  
-  if (document.getElementById('pc-panel-grid')) renderDynamicPanels('pc');
-  if (document.getElementById('mobile-panel-grid')) renderDynamicPanels('mobile');
 });
 
-// Sync data between 2 repos
-function initCloudSync() {
-  if (FIREBASE_REST_URL) {
-    fetch(`${FIREBASE_REST_URL.replace(/\/$/, '')}/settings.json`)
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          if (data.discord) localStorage.setItem('kgff_discord_link', data.discord);
-          if (data.topup) localStorage.setItem('kgff_topup_link', data.topup);
-          if (data.categories) localStorage.setItem('kgff_category_meta', JSON.stringify(data.categories));
-          if (data.pcPanels) localStorage.setItem('kgff_pc_panels', JSON.stringify(data.pcPanels));
-          if (data.mobilePanels) localStorage.setItem('kgff_mobile_panels', JSON.stringify(data.mobilePanels));
-          applyGlobalLinks();
-          applyCategoryVisibility();
-        }
-      })
-      .catch(err => console.log("Local Storage Mode (No Cloud DB Connected)"));
-  }
+// Auto-sync settings from Firebase Database
+function fetchCloudSettings() {
+  fetch(`${FIREBASE_URL}/settings.json`)
+    .then(res => res.json())
+    .then(data => {
+      if (data) {
+        if (data.discord) localStorage.setItem('kgff_discord_link', data.discord);
+        if (data.topup) localStorage.setItem('kgff_topup_link', data.topup);
+        if (data.categories) localStorage.setItem('kgff_category_meta', JSON.stringify(data.categories));
+        if (data.pcPanels) localStorage.setItem('kgff_pc_panels', JSON.stringify(data.pcPanels));
+        if (data.mobilePanels) localStorage.setItem('kgff_mobile_panels', JSON.stringify(data.mobilePanels));
+      }
+      applyGlobalLinks();
+      applyCategoryVisibility();
+      if (document.getElementById('pc-panel-grid')) renderDynamicPanels('pc');
+      if (document.getElementById('mobile-panel-grid')) renderDynamicPanels('mobile');
+    })
+    .catch(() => {
+      applyGlobalLinks();
+      applyCategoryVisibility();
+      if (document.getElementById('pc-panel-grid')) renderDynamicPanels('pc');
+      if (document.getElementById('mobile-panel-grid')) renderDynamicPanels('mobile');
+    });
 }
 
 function applyGlobalLinks() {
@@ -105,10 +105,10 @@ function disableSection(type) {
   });
 }
 
-// Render dynamic PC/Mobile store items & modal checkout
 function renderDynamicPanels(type) {
   const isPC = type === 'pc';
   const grid = document.getElementById(isPC ? 'pc-panel-grid' : 'mobile-panel-grid');
+  if (!grid) return;
   const defaultItems = isPC ? getDefaultPCItems() : getDefaultMobileItems();
   const storageKey = isPC ? 'kgff_pc_panels' : 'kgff_mobile_panels';
   const items = JSON.parse(localStorage.getItem(storageKey)) || defaultItems;
@@ -158,7 +158,7 @@ function renderDynamicPanels(type) {
             <div class="modal-selected-package" id="${modalId}-summary" style="text-align:center; color:#FF3366; font-weight:700; margin-bottom:15px;"></div>
             <div class="modal-actions">
               <button class="btn-action btn-download" onclick="goToStep1('${modalId}')">&larr; BACK</button>
-              <button class="btn-action btn-buy" onclick="submitOrder('${modalId}', '${item.title}')">CREATE TICKET</button>
+              <button class="btn-action btn-buy" onclick="submitOrder('${modalId}')">CREATE TICKET</button>
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@ function goToStep1(id) {
   document.getElementById(`${id}-step1`).style.display = 'block';
 }
 
-function submitOrder(id, title) {
+function submitOrder(id) {
   const user = document.getElementById(`${id}-user`).value.trim();
   if (!user) return showToast("Please enter your Discord Username/ID");
   const discordLink = localStorage.getItem('kgff_discord_link') || "https://discord.gg/NZsbZq4C7";
