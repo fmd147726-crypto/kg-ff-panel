@@ -1,91 +1,473 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KGFF PANEL - Premium Free Fire Hub</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KG FF PANEL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #05020a;
+            --card-bg: #0b0512;
+            --border-color: #1a0b2e;
+            --neon-pink: #ff0066;
+            --neon-green: #00cc66;
+            --text-light: #ffffff;
+            --text-gray: #777777;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-light); min-height: 100vh; overflow-x: hidden; position: relative; display: flex; flex-direction: column; }
+
+        /* Background Glow Effect */
+        .bg-glow {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 0, 102, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header / Navbar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 50px;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* Clickable Logo Section */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .site-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--neon-pink); 
+        }
+
+        .brand-text h2 {
+            font-size: 16px;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .brand-text p {
+            font-size: 9px;
+            color: var(--text-gray);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .header-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .header-btn:hover { border-color: white; }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 204, 102, 0.05);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        .status-badge i { font-size: 8px; }
+
+        .hero h1 {
+            font-size: 45px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .hero h1 span { color: var(--neon-pink); }
+
+        .hero-subtitle {
+            font-size: 11px;
+            color: var(--text-gray);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 35px;
+        }
+
+        /* Action Buttons */
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .action-btn:hover { border-color: var(--text-light); }
+
+        .icon-btn {
+            background: rgba(255, 0, 102, 0.05);
+            border: 1px solid rgba(255, 0, 102, 0.2);
+            color: var(--neon-pink);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .icon-btn:hover { background: var(--neon-pink); color: white; }
+
+        /* Divider */
+        .divider {
+            text-align: center;
+            margin: 50px 0 40px;
+            font-size: 11px;
+            color: #444;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Grid Cards */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            text-decoration: none;
+            position: relative;
+            transition: 0.3s;
+            display: none;
+        }
+        .card.visible { display: block; }
+        
+        .card:hover {
+            border-color: #3a1b5e;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Badges */
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .badge-hot { background: var(--neon-pink); color: white; }
+        .badge-premium { background: #ff9900; color: white; }
+        .badge-vip { background: #0066ff; color: white; }
+
+        .card-icon {
+            font-size: 35px;
+            margin-bottom: 20px;
+            color: #ff3366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px;
+        }
+        .card-icon img { width: 50px; height: 50px; object-fit: contain; }
+        .card-icon span { font-size: 40px; line-height: 1; display: inline-block; }
+
+        .card-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-desc {
+            color: #555;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .explore-btn {
+            border: 1px solid #333;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .card:hover .explore-btn { background: white; color: black; border-color: white; }
+
+        /* Footer Styling */
+        .footer {
+            margin-top: auto;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            background: #030107;
+            font-size: 12px;
+            color: var(--text-gray);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 30px; }
+            .hero-actions { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
+            .header { padding: 20px 20px; }
+        }
+    </style>
 </head>
 <body>
 
-  <header class="top-bar">
-    <div class="top-bar-container">
-      <div class="brand-logo">KGFF PANEL</div>
-      <a href="https://discord.gg/NZsbZq4C7" target="_blank" class="discord-top-btn" data-global-link="discord">💬 DISCORD</a>
-    </div>
-  </header>
+    <div class="bg-glow"></div>
 
-  <main class="container">
-    <section class="hero-section">
-      <h1 class="hero-title">KGFF PANEL</h1>
-      <p class="hero-subtitle">THE ULTIMATE FREE FIRE EXPLOITS &amp; TOOL HUB</p>
-      
-      <div class="hero-buttons">
-        <a href="https://discord.gg/NZsbZq4C7" target="_blank" class="hero-btn hero-btn-primary" data-global-link="discord">
-          Join Support Discord &rarr;
+    <!-- Header Section -->
+    <header class="header">
+        <a href="index.html" class="brand">
+            <img src="logo.png" alt="Logo" class="site-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/888/888879.png'">
+            <div class="brand-text">
+                <h2>KG FF PANEL</h2>
+                <p>PREMIUM CORP</p>
+            </div>
         </a>
-        <a href="https://codashop.com/" target="_blank" class="hero-btn hero-btn-secondary" data-global-link="topup">
-          Free Fire Diamond Topup &rarr;
+
+        <!-- এখানে dynamic-discord ক্লাস যোগ করা হয়েছে -->
+        <a href="https://discord.gg/ZBjSWaF7u" target="_blank" class="header-btn dynamic-discord">
+            <i class="fab fa-discord"></i> Join Discord
         </a>
-      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="status-badge">
+            <i class="fas fa-circle"></i> LIVE SERVER ACTIVE
+        </div>
+        
+        <h1>KG FF <span>PANEL</span></h1>
+        <p class="hero-subtitle">NEXT GEN PRIVATE SOLUTIONS • SECURE • RELIABLE</p>
+
+        <div class="hero-actions">
+            <!-- এখানে dynamic-discord ক্লাস যোগ করা হয়েছে -->
+            <a href="https://discord.gg/ZBjSWaF7u" target="_blank" class="action-btn dynamic-discord">
+                <i class="fab fa-discord"></i> Join Support Discord →
+            </a>
+            <a href="https://rijuedit.github.io/oxi-topup/" target="_blank" class="action-btn">
+                <i class="fas fa-gem"></i> Free Fire Diamond Topup →
+            </a>
+            <a href="#" class="icon-btn">
+                <i class="fas fa-bell"></i>
+            </a>
+        </div>
     </section>
 
-    <div class="cards-grid" id="main-category-grid">
-      <a href="free-fire-apk.html" class="hub-card" data-cat-id="freefire-apk">
-        <span class="card-badge">HOT</span>
-        <div class="card-icon-circle">📦</div>
-        <h2 class="card-title">Free Fire APK</h2>
-        <p class="card-desc">Download safe modified and original Free Fire APK clients directly.</p>
-        <span class="btn-explore">EXPLORE &rarr;</span>
-      </a>
+    <div class="divider">// AVAILABLE SYSTEMS //</div>
 
-      <a href="emulator.html" class="hub-card" data-cat-id="emulator">
-        <span class="card-badge">VIP</span>
-        <div class="card-icon-circle">🖥️</div>
-        <h2 class="card-title">Emulator</h2>
-        <p class="card-desc">Optimized Android emulators tailored for high FPS Free Fire gameplay.</p>
-        <span class="btn-explore">EXPLORE &rarr;</span>
-      </a>
+    <!-- Main Grid Cards -->
+    <div class="grid-container" id="category-grid">
+        
+        <!-- Free Panel -->
+        <a href="free-panel.html" class="card" id="card_free_panel">
+            <div class="badge badge-hot">HOT</div>
+            <div class="card-icon" id="icon_free_panel">💻</div>
+            <div class="card-title" id="title_free_panel">FREE PANEL</div>
+            <div class="card-desc">NEW PC PANEL UPDATED OB55</div>
+            <div class="explore-btn">EXPLORE →</div>
+        </a>
 
-      <a href="free-bypass.html" class="hub-card" data-cat-id="free-bypass">
-        <span class="card-badge">HOT</span>
-        <div class="card-icon-circle">🔓</div>
-        <h2 class="card-title">Free Bypass</h2>
-        <p class="card-desc">Bypass emulator detection easily with full security features.</p>
-        <span class="btn-explore">EXPLORE &rarr;</span>
-      </a>
+        <!-- Free Bypass -->
+        <a href="free-bypass.html" class="card" id="card_free_bypass">
+            <div class="card-icon" id="icon_free_bypass">💻</div>
+            <div class="card-title" id="title_free_bypass">FREE BYPASS</div>
+            <div class="card-desc">FAST & RELIABLE MATCHMAKING</div>
+            <div class="explore-btn">EXPLORE →</div>
+        </a>
 
-      <a href="free-panel.html" class="hub-card" data-cat-id="free-panel">
-        <span class="card-badge">VIP</span>
-        <div class="card-icon-circle">🎮</div>
-        <h2 class="card-title">Free Panel</h2>
-        <p class="card-desc">Free access tools with auto-aim assist and headshot enhancers.</p>
-        <span class="btn-explore">EXPLORE &rarr;</span>
-      </a>
+        <!-- Emulator -->
+        <a href="emulator.html" class="card" id="card_emulator">
+            <div class="card-icon" id="icon_emulator"><i class="far fa-star"></i></div>
+            <div class="card-title" id="title_emulator">EMULATOR</div>
+            <div class="card-desc">BEST WORKING EMULATOR</div>
+            <div class="explore-btn">EXPLORE →</div>
+        </a>
 
-      <a href="paid-mobile-panel.html" class="hub-card" data-cat-id="paid-mobile">
-        <span class="card-badge">PREMIUM</span>
-        <div class="card-icon-circle">📱</div>
-        <h2 class="card-title">Paid Mobile Panels</h2>
-        <p class="card-desc">Exclusive non-root &amp; root Android/iOS VIP mod menus.</p>
-        <span class="btn-explore">EXPLORE &rarr;</span>
-      </a>
+        <!-- Free Fire APK -->
+        <a href="free-fire-apk.html" class="card" id="card_apk">
+            <div class="card-icon" id="icon_apk"><i class="fas fa-bolt"></i></div>
+            <div class="card-title" id="title_apk">FREE FIRE APK</div>
+            <div class="card-desc">DOWNLOAD LATEST APK V2.0</div>
+            <div class="explore-btn">EXPLORE →</div>
+        </a>
 
-      <a href="pc-paid-panel.html" class="hub-card" data-cat-id="paid-pc">
-        <span class="card-badge">PREMIUM</span>
-        <div class="card-icon-circle">💻</div>
-        <h2 class="card-title">Paid PC Panels</h2>
-        <p class="card-desc">Undetected private internal &amp; external PC software.</p>
-        <span class="btn-explore">EXPLORE &rarr;</span>
-      </a>
+        <!-- Buy PC Panel -->
+        <a href="buy-pc-panel.html" class="card" id="card_pc_panel">
+            <div class="badge badge-premium">PREMIUM</div>
+            <div class="card-icon" id="icon_pc_panel"><i class="fas fa-desktop"></i></div>
+            <div class="card-title" id="title_pc_panel">BUY PC PANEL</div>
+            <div class="card-desc">ADVANCED VIP FEATURES FOR PC</div>
+            <div class="explore-btn">EXPLORE →</div>
+        </a>
+
+        <!-- Buy Mobile Panel -->
+        <a href="mobile-panel.html" class="card" id="card_mobile_panel">
+            <div class="badge badge-vip">VIP</div>
+            <div class="card-icon" id="icon_mobile_panel"><i class="fas fa-mobile-alt"></i></div>
+            <div class="card-title" id="title_mobile_panel">BUY MOBILE PANEL</div>
+            <div class="card-desc">SAFE VIP PANEL FOR ANDROID/IOS</div>
+            <div class="explore-btn">EXPLORE →</div>
+        </a>
+
     </div>
-  </main>
 
-  <footer class="footer">
-    <p>&copy; 2026 KGFF PANEL. All rights reserved.</p>
-  </footer>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 KG FF PANEL. All rights reserved.</p>
+    </footer>
 
-  <script src="script.js"></script>
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOFL6dKvw_RfyKMe3QQgvE4lt7Gtc4yaM",
+            authDomain: "bangla-ff-admin.firebaseapp.com",
+            databaseURL: "https://bangla-ff-admin-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bangla-ff-admin",
+            storageBucket: "bangla-ff-admin.firebasestorage.app",
+            messagingSenderId: "295013484465",
+            appId: "1:295013484465:web:b6bc2a949e239095761f90"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- Discord Auto Link Fetcher ---
+        onValue(ref(db, 'global_settings/discord_link'), (snapshot) => {
+            if (snapshot.exists()) {
+                const link = snapshot.val();
+                document.querySelectorAll('.dynamic-discord').forEach(btn => {
+                    btn.href = link;
+                });
+            }
+        });
+        // ----------------------------------------------
+
+        // Smart Icon Renderer (FontAwesome + Emoji + Image)
+        function renderIcon(iconDiv, data) {
+            if (!iconDiv || !data) return;
+            const val = (data.iconValue || '').trim();
+            if (!val) return;
+
+            if (data.iconType === 'image' || val.startsWith('http')) {
+                iconDiv.innerHTML = `<img src="${val}" alt="icon">`;
+            } else if (data.iconType === 'emoji' || (!val.includes('fa-') && !val.startsWith('http'))) {
+                // Direct emoji or plain text
+                iconDiv.innerHTML = `<span>${val}</span>`;
+            } else {
+                // FontAwesome class
+                iconDiv.innerHTML = `<i class="${val}"></i>`;
+            }
+        }
+
+        const keys = ['free_panel', 'free_bypass', 'emulator', 'apk', 'pc_panel', 'mobile_panel'];
+        
+        keys.forEach(key => {
+            // Visibility Toggle
+            onValue(ref(db, `site_visibility/${key}`), s => {
+                const isVisible = !s.exists() || s.val() === true;
+                const card = document.getElementById(`card_${key}`);
+                if (card) {
+                    if (isVisible) card.classList.add('visible');
+                    else card.classList.remove('visible');
+                }
+            });
+
+            // Title + Icon Sync from Admin
+            onValue(ref(db, `site_settings/categories/${key}`), s => {
+                if (s.exists()) {
+                    const data = s.val();
+                    if (data.title) {
+                        const titleEl = document.getElementById(`title_${key}`);
+                        if (titleEl) titleEl.innerText = data.title;
+                    }
+                    const iconDiv = document.getElementById(`icon_${key}`);
+                    renderIcon(iconDiv, data);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
