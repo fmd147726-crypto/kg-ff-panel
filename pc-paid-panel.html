@@ -1,39 +1,862 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paid PC Panels - KGFF PANEL</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGFF PANEL - PC Premium</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap');
+
+        :root {
+            --bg-dark: #07030b;
+            --neon-pink: #ff007f;
+            --neon-purple: #a855f7;
+            --neon-green: #00ff7f;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        button, input { font: inherit; }
+        button { cursor: pointer; }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        #mouse-glow {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(
+                circle at var(--x, 50%) var(--y, 50%),
+                rgba(168,85,247,.13), transparent 48%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .navbar {
+            background: rgba(13,8,24,.94);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--neon-purple);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            border: 1px solid var(--neon-purple);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            transition: .3s;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: var(--neon-purple);
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+
+        .video-container {
+            width: calc(100% - 30px);
+            max-width: 800px;
+            margin: 20px auto;
+            border: 1.5px solid var(--neon-purple);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 0 20px rgba(168,85,247,.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .youtube-thumbnail {
+            display: block;
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #08040d;
+            overflow: hidden;
+        }
+
+        .youtube-thumbnail img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .35s, filter .35s;
+        }
+
+        .youtube-thumbnail:hover img {
+            transform: scale(1.025);
+            filter: brightness(.8);
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 68px;
+            height: 48px;
+            border-radius: 14px;
+            background: #ff0033;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 18px #0008;
+            transition: .25s;
+        }
+
+        .play-icon i {
+            font-size: 23px;
+            color: white;
+            margin-left: 4px;
+        }
+
+        .youtube-thumbnail:hover .play-icon {
+            background: #e60023;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card {
+            min-width: 0;
+            background: #0f0a1d;
+            border: 1.5px solid #1f1a2e;
+            border-radius: 18px;
+            padding: 13px;
+            text-align: center;
+            transition: .3s;
+        }
+
+        .product-card:hover {
+            border-color: var(--neon-purple);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px #0008;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 13px;
+            margin-bottom: 14px;
+            border: 1px solid #2d2640;
+            background: #08040d;
+        }
+
+        .product-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .btn-buy {
+            background: linear-gradient(90deg, #d400ff, #ff007f);
+            color: white;
+            width: 100%;
+            padding: 11px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px #ff007f40;
+            transition: .3s;
+        }
+
+        .btn-buy:hover {
+            box-shadow: 0 0 20px var(--neon-pink);
+            transform: scale(1.015);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000e;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: #0f0a19;
+            width: 100%;
+            max-width: 480px;
+            border: 1.5px solid var(--neon-pink);
+            border-radius: 18px;
+            position: relative;
+            padding: 24px;
+            box-shadow: 0 0 30px #ff007f33;
+            margin: auto;
+        }
+
+        .modal-title {
+            color: var(--neon-pink);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 17px;
+            font-weight: bold;
+            text-align: center;
+            margin: 5px 22px 20px;
+            overflow-wrap: anywhere;
+        }
+
+        .package-item {
+            width: 100%;
+            background: #07030b;
+            border: 1px solid #2d2640;
+            border-radius: 10px;
+            padding: 13px;
+            margin-bottom: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: .2s;
+            color: white;
+        }
+
+        .package-item:hover { border-color: var(--neon-green); }
+
+        .package-item.selected {
+            border: 2px solid var(--neon-green);
+            background: #00ff7f0d;
+        }
+
+        .package-info {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .package-info i { color: #facc15; }
+
+        .package-price {
+            color: var(--neon-green);
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+        }
+
+        .discord-input {
+            width: 100%;
+            background: #07030b;
+            border: 1px solid var(--neon-pink);
+            color: white;
+            padding: 13px;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .discord-input:focus { border-color: var(--neon-green); }
+        .discord-input::placeholder { color: #777; }
+
+        .help-text {
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.65;
+            margin-top: 9px;
+        }
+
+        .btn-ticket {
+            background: linear-gradient(90deg, #00c96b, #00ff91);
+            color: #000;
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            transition: .3s;
+            margin-top: 18px;
+        }
+
+        .btn-ticket:hover { box-shadow: 0 0 22px #00ff7f55; }
+        .btn-ticket:disabled { opacity: .6; cursor: wait; }
+
+        .btn-back {
+            background: #21142d;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #999;
+            font-size: 26px;
+            cursor: pointer;
+            background: transparent;
+            border: 0;
+        }
+
+        .notice {
+            display: none;
+            padding: 11px;
+            margin-top: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .notice.show { display: block; }
+        .notice.error { color: #fecaca; background: #2a0c13; border: 1px solid #7f1d1d; }
+        .notice.info { color: #ddd6fe; background: #1b1030; border: 1px solid #6d28d9; }
+
+        .loading-text {
+            text-align: center;
+            padding: 35px 10px;
+            color: #aaa;
+            grid-column: 1 / -1;
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            .navbar { padding: 10px; }
+            .navbar .orbitron { font-size: 10px; text-align: center; }
+            .nav-btn { padding: 6px 8px; font-size: 10px; }
+            .video-container { margin: 14px auto; }
+            .play-icon { width: 54px; height: 38px; border-radius: 11px; }
+            .play-icon i { font-size: 19px; }
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+                padding: 12px;
+            }
+            .product-card { padding: 9px; border-radius: 13px; }
+            .product-image { height: 105px; }
+            .product-title { font-size: 10px; }
+            .btn-buy { padding: 10px 4px; font-size: 10px; }
+            .modal-content { padding: 22px 15px; }
+            .modal-title { font-size: 14px; }
+            .package-item { padding: 11px 8px; }
+            .package-info { font-size: 12px; }
+            .package-price { font-size: 10px; }
+        }
+    </style>
 </head>
+
 <body>
+    <div id="mouse-glow"></div>
 
-  <header class="top-bar">
-    <div class="top-bar-container">
-      <a href="index.html" class="back-link">&lt; BACK</a>
-      <div class="brand-logo">KGFF PANEL</div>
-      <a href="https://discord.gg/NZsbZq4C7" target="_blank" class="discord-top-btn" data-global-link="discord">💬 DISCORD</a>
+    <nav class="navbar">
+        <a href="index.html" class="nav-btn">
+            <i class="fas fa-chevron-left mr-1"></i> BACK
+        </a>
+
+        <div class="orbitron text-white text-lg font-bold tracking-widest">
+            KGFF PANEL
+        </div>
+
+        <a
+            id="discordBtn"
+            href="https://discord.gg/ZBjSWaF7u"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="nav-btn dynamic-discord"
+        >
+            <i class="fab fa-discord mr-1"></i> DISCORD
+        </a>
+    </nav>
+
+    <!-- YouTube Thumbnail Section -->
+    <section id="videoSection" class="video-container hidden">
+        <a
+            id="youtubeThumbnailLink"
+            class="youtube-thumbnail"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Watch setup video on YouTube"
+        >
+            <img id="youtubeThumbnail" src="" alt="Watch setup video on YouTube">
+            <span class="play-icon">
+                <i class="fas fa-play"></i>
+            </span>
+        </a>
+    </section>
+
+    <header class="text-center mt-8 px-3 relative z-10">
+        <h1 class="orbitron text-2xl md:text-3xl font-bold flex items-center justify-center gap-3">
+            <i class="fas fa-desktop" style="color:#ff007f"></i>
+            PC PANEL PREMIUM
+        </h1>
+        <p class="text-gray-400 mt-3">Choose your package and place your order</p>
+    </header>
+
+    <main id="productGrid" class="product-grid">
+        <div class="loading-text">Loading PC Panels...</div>
+    </main>
+
+    <!-- Purchase Modal -->
+    <div id="purchaseModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <button type="button" id="closeModalBtn" class="close-modal" aria-label="Close">&times;</button>
+
+            <div id="modalProductTitle" class="modal-title">SELECT PACKAGE</div>
+
+            <div id="packageList"></div>
+
+            <button type="button" id="continueBtn" class="btn-ticket">
+                CONTINUE
+            </button>
+
+            <section id="customerSection" class="hidden">
+                <label for="discordUser" class="field-label">
+                    <i class="fab fa-discord"></i>
+                    আপনার Discord Username অথবা ID লিখুন
+                </label>
+
+                <input
+                    type="text"
+                    id="discordUser"
+                    class="discord-input"
+                    placeholder="যেমন: your_username অথবা Discord ID"
+                    autocomplete="off"
+                    maxlength="100"
+                >
+
+                <p class="help-text">
+                    Username, Display Name অথবা Discord ID দিতে পারবেন।
+                    অর্ডার করার আগে আমাদের Discord Server-এ Join করা থাকতে হবে।
+                </p>
+
+                <div id="orderNotice" class="notice" role="alert" aria-live="polite"></div>
+
+                <button type="button" id="createTicketBtn" class="btn-ticket">
+                    <i class="fab fa-discord mr-2"></i>
+                    CREATE PRIVATE TICKET
+                </button>
+
+                <button type="button" id="backPackagesBtn" class="btn-back">
+                    <i class="fas fa-arrow-left mr-1"></i> BACK TO PACKAGES
+                </button>
+            </section>
+        </div>
     </div>
-  </header>
 
-  <main class="container">
-    <div class="section-header-row">
-      <div>
-        <h1 class="page-title">PAID PC PANELS</h1>
-        <p class="section-subtitle">Premium Windows External &amp; Internal Hacks</p>
-      </div>
-    </div>
+    <script>
+        const BOT_API_URL = "https://bangla-ff-bot-server.onrender.com/create-ticket";
 
-    <div class="store-grid" id="pc-panel-grid">
-      <!-- Dynamic JS Rendering & Modals -->
-    </div>
-  </main>
+        let currentProduct = null;
+        let currentProductId = null;
+        let packages = [];
+        let selectedPkgIndex = null;
+        let submitting = false;
 
-  <footer class="footer">
-    <p>&copy; 2026 KGFF PANEL. All rights reserved.</p>
-  </footer>
+        const $ = (id) => document.getElementById(id);
 
-  <script src="script.js"></script>
+        // Mouse glow effect
+        document.addEventListener("mousemove", (event) => {
+            const glow = $("mouse-glow");
+            if (glow) {
+                glow.style.setProperty("--x", event.clientX + "px");
+                glow.style.setProperty("--y", event.clientY + "px");
+            }
+        });
+
+        function getYouTubeVideoId(value) {
+            if (typeof value !== "string") return null;
+            try {
+                const url = new URL(value.trim());
+                const host = url.hostname.replace(/^www\./, "").toLowerCase();
+                if (host === "youtu.be") return url.pathname.split("/").filter(Boolean)[0] || null;
+                if (["youtube.com", "m.youtube.com", "youtube-nocookie.com"].includes(host)) {
+                    if (url.pathname === "/watch") return url.searchParams.get("v");
+                    const parts = url.pathname.split("/").filter(Boolean);
+                    if (["embed", "shorts", "live"].includes(parts[0])) return parts[1] || null;
+                }
+            } catch (error) {
+                console.warn("Invalid video URL:", error);
+            }
+            return null;
+        }
+
+        function setYouTubeThumbnail(videoUrl) {
+            const section = $("videoSection");
+            const link = $("youtubeThumbnailLink");
+            const image = $("youtubeThumbnail");
+            const videoId = getYouTubeVideoId(videoUrl);
+
+            if (!videoId || !/^[a-zA-Z0-9_-]{6,20}$/.test(videoId)) {
+                section.classList.add("hidden");
+                link.href = "#";
+                image.removeAttribute("src");
+                return;
+            }
+
+            const thumbnailOptions = [
+                `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+            ];
+
+            image.dataset.fallbackUsed = "false";
+            image.src = thumbnailOptions[0];
+
+            image.onerror = () => {
+                if (image.dataset.fallbackUsed === "false") {
+                    image.dataset.fallbackUsed = "true";
+                    image.src = thumbnailOptions[1];
+                } else {
+                    image.onerror = null;
+                    image.alt = "YouTube thumbnail unavailable";
+                }
+            };
+
+            link.href = `https://www.youtube.com/watch?v=${videoId}`;
+            section.classList.remove("hidden");
+        }
+
+        function loadPageData() {
+            // 1. Load Global Discord Link
+            const globalLinks = JSON.parse(localStorage.getItem('kgff_global_links') || '{}');
+            if (globalLinks.discord) {
+                document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = globalLinks.discord);
+            }
+
+            // 2. Load Page Settings (Video URL & Settings)
+            const settings = JSON.parse(localStorage.getItem('kgff_settings_pc_panel') || localStorage.getItem('kgff_settings_pc') || '{}');
+            const vUrl = settings.video_url || settings.yt_link || '';
+            const vEnabled = settings.video_enabled !== false;
+
+            if (vEnabled && vUrl) {
+                setYouTubeThumbnail(vUrl);
+            } else {
+                $("videoSection").classList.add("hidden");
+            }
+
+            // 3. Load Products from localStorage
+            const grid = $("productGrid");
+            grid.replaceChildren();
+
+            const items = JSON.parse(localStorage.getItem('kgff_pc_panels') || localStorage.getItem('kgff_items_pc_panel') || '[]');
+
+            if (!items || items.length === 0) {
+                const empty = document.createElement("div");
+                empty.className = "loading-text";
+                empty.textContent = "No PC Panel products available right now.";
+                grid.appendChild(empty);
+                return;
+            }
+
+            items.forEach((product, index) => {
+                const id = product.id || index;
+                const card = document.createElement("article");
+                card.className = "product-card";
+
+                const image = document.createElement("img");
+                image.className = "product-image";
+                image.alt = product.title || "PC Panel";
+                image.loading = "lazy";
+                image.src = product.image || product.download || "https://placehold.co/400x200/0d0818/ffffff?text=PC+Panel";
+
+                image.onerror = () => {
+                    image.onerror = null;
+                    image.src = "https://placehold.co/400x200/0d0818/ffffff?text=No+Image";
+                };
+
+                const title = document.createElement("h3");
+                title.className = "product-title";
+                title.textContent = product.title || "PC Panel";
+
+                const buyButton = document.createElement("button");
+                buyButton.type = "button";
+                buyButton.className = "btn-buy";
+
+                const icon = document.createElement("i");
+                icon.className = "fas fa-shopping-cart mr-2";
+                buyButton.append(icon, document.createTextNode("BUY NOW"));
+
+                buyButton.addEventListener("click", () => {
+                    openPurchaseModal(product);
+                });
+
+                card.append(image, title, buyButton);
+                grid.appendChild(card);
+            });
+        }
+
+        function openPurchaseModal(product) {
+            currentProduct = product;
+            currentProductId = product.id || product.title;
+
+            const rawPackages = product.packages || [{ duration: 'Standard', sell_price: product.price || '0' }];
+            packages = Array.isArray(rawPackages) ? rawPackages : Object.values(rawPackages || {});
+            packages = packages.filter(pkg => pkg && typeof pkg === "object");
+
+            selectedPkgIndex = null;
+
+            $("modalProductTitle").textContent = currentProduct.title || "PC Panel";
+
+            $("packageList").replaceChildren();
+            $("customerSection").classList.add("hidden");
+            $("continueBtn").classList.remove("hidden");
+            $("discordUser").value = "";
+            $("createTicketBtn").disabled = false;
+            $("createTicketBtn").innerHTML = '<i class="fab fa-discord mr-2"></i> CREATE PRIVATE TICKET';
+
+            clearNotice();
+
+            if (packages.length === 0) {
+                $("packageList").textContent = "এই Product-এর কোনো Package পাওয়া যায়নি।";
+                $("continueBtn").classList.add("hidden");
+            } else {
+                packages.forEach((pkg, index) => {
+                    const item = document.createElement("button");
+                    item.type = "button";
+                    item.className = "package-item";
+                    item.setAttribute("aria-pressed", "false");
+
+                    const info = document.createElement("span");
+                    info.className = "package-info";
+
+                    const clock = document.createElement("i");
+                    clock.className = "far fa-clock";
+
+                    const duration = document.createElement("span");
+                    duration.textContent = pkg.duration || "Package";
+
+                    info.append(clock, duration);
+
+                    const price = document.createElement("span");
+                    price.className = "package-price";
+                    price.textContent = `৳${pkg.sell_price ?? pkg.price ?? "0"} BDT`;
+
+                    item.append(info, price);
+
+                    item.addEventListener("click", () => {
+                        selectPackage(index);
+                    });
+
+                    $("packageList").appendChild(item);
+                });
+            }
+
+            $("purchaseModal").style.display = "flex";
+        }
+
+        function selectPackage(index) {
+            selectedPkgIndex = index;
+            document.querySelectorAll(".package-item").forEach((item, i) => {
+                const selected = i === index;
+                item.classList.toggle("selected", selected);
+                item.setAttribute("aria-pressed", String(selected));
+            });
+        }
+
+        $("continueBtn").addEventListener("click", () => {
+            if (selectedPkgIndex === null) {
+                alert("দয়া করে একটি Package সিলেক্ট করুন!");
+                return;
+            }
+            $("customerSection").classList.remove("hidden");
+            $("continueBtn").classList.add("hidden");
+            clearNotice();
+            $("discordUser").focus();
+        });
+
+        $("backPackagesBtn").addEventListener("click", () => {
+            if (submitting) return;
+            $("customerSection").classList.add("hidden");
+            $("continueBtn").classList.remove("hidden");
+            clearNotice();
+        });
+
+        function showNotice(message, type = "error") {
+            const notice = $("orderNotice");
+            notice.textContent = message;
+            notice.className = `notice show ${type}`;
+        }
+
+        function clearNotice() {
+            $("orderNotice").textContent = "";
+            $("orderNotice").className = "notice";
+        }
+
+        $("createTicketBtn").addEventListener("click", submitOrder);
+
+        async function submitOrder() {
+            if (submitting) return;
+
+            const customerInput = $("discordUser").value.trim();
+
+            if (!customerInput || customerInput.length > 100) {
+                showNotice("আপনার Discord Username অথবা ID সঠিকভাবে লিখুন।");
+                $("discordUser").focus();
+                return;
+            }
+
+            if (selectedPkgIndex === null || !packages[selectedPkgIndex] || !currentProduct) {
+                showNotice("Product বা Package পাওয়া যায়নি। আবার চেষ্টা করুন।");
+                return;
+            }
+
+            const pkg = packages[selectedPkgIndex];
+            const price = Number(pkg.sell_price || pkg.price);
+
+            if (!Number.isFinite(price) || price < 0) {
+                showNotice("এই Package-এর দাম সঠিক নয়। Admin-এর সঙ্গে যোগাযোগ করুন।");
+                return;
+            }
+
+            const payload = {
+                discordUserId: customerInput,
+                discordUsername: customerInput,
+                productTitle: String(currentProduct.title || "PC Panel"),
+                packageName: String(pkg.duration || "N/A"),
+                price: price,
+                category: "BUY PC PANEL"
+            };
+
+            const button = $("createTicketBtn");
+            submitting = true;
+            button.disabled = true;
+            button.textContent = "CREATING TICKET...";
+            clearNotice();
+
+            try {
+                const response = await fetch(BOT_API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch {
+                    throw new Error("INVALID_BOT_RESPONSE");
+                }
+
+                if (!response.ok || !result.success) {
+                    switch (result.error) {
+                        case "MEMBER_NOT_FOUND":
+                            showNotice("Member পাওয়া যায়নি। Username ঠিক আছে কি না দেখুন এবং আমাদের Discord Server-এ Join করুন।");
+                            break;
+                        case "USERNAME_NOT_UNIQUE":
+                            showNotice("একই নামের একাধিক Member পাওয়া গেছে। Numeric Discord User ID ব্যবহার করুন।");
+                            break;
+                        case "BOT_NOT_READY":
+                            showNotice("Bot চালু হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।");
+                            break;
+                        case "MISSING_ORDER_DETAILS":
+                            showNotice("Order details অসম্পূর্ণ। Page Reload করে চেষ্টা করুন।");
+                            break;
+                        default:
+                            showNotice("Ticket তৈরি হয়নি। Bot Server ও Discord permissions পরীক্ষা করে আবার চেষ্টা করুন।");
+                    }
+                    return;
+                }
+
+                let targetUrl;
+                try {
+                    targetUrl = new URL(result.url);
+                } catch {
+                    showNotice("Ticket Link পাওয়া যায়নি। Admin-এর সঙ্গে যোগাযোগ করুন।");
+                    return;
+                }
+
+                if (
+                    targetUrl.protocol !== "https:" ||
+                    targetUrl.hostname !== "discord.com" ||
+                    !/^\/channels\/\d+\/\d+\/?$/.test(targetUrl.pathname)
+                ) {
+                    showNotice("Bot সঠিক Ticket Channel Link দেয়নি।");
+                    return;
+                }
+
+                showNotice("Ticket তৈরি হয়েছে! Discord খুলছে...", "info");
+                window.location.assign(targetUrl.href);
+
+            } catch (error) {
+                console.error("Ticket request error:", error);
+                if (error.message === "INVALID_BOT_RESPONSE") {
+                    showNotice("Bot Server সঠিক Response দেয়নি। Render Logs পরীক্ষা করুন।");
+                } else {
+                    showNotice("Bot Server-এর সঙ্গে সংযোগ হয়নি। Render Server চালু আছে কি না পরীক্ষা করুন।");
+                }
+            } finally {
+                submitting = false;
+                button.disabled = false;
+                button.innerHTML = '<i class="fab fa-discord mr-2"></i> CREATE PRIVATE TICKET';
+            }
+        }
+
+        function closeModal() {
+            if (submitting) return;
+            $("purchaseModal").style.display = "none";
+            clearNotice();
+        }
+
+        $("closeModalBtn").addEventListener("click", closeModal);
+
+        $("purchaseModal").addEventListener("click", (event) => {
+            if (event.target === $("purchaseModal")) closeModal();
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && $("purchaseModal").style.display === "flex") {
+                closeModal();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', loadPageData);
+    </script>
 </body>
 </html>
