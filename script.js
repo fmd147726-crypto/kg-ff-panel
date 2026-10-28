@@ -2,13 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDOFL6dKvw_RfyKMe3QQgvE4lt7Gtc4yaM",
-  authDomain: "bangla-ff-admin.firebaseapp.com",
-  databaseURL: "https://bangla-ff-admin-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bangla-ff-admin",
-  storageBucket: "bangla-ff-admin.firebasestorage.app",
-  messagingSenderId: "295013484465",
-  appId: "1:295013484465:web:b6bc2a949e239095761f90"
+    apiKey: "AIzaSyCp4Kc-rt3umBsiBXyIIqVgg6cCx0xEsw",
+    authDomain: "kg-ff-panel.firebaseapp.com",
+    databaseURL: "https://kg-ff-panel-default-rtdb.firebaseio.com",
+    projectId: "kg-ff-panel",
+    storageBucket: "kg-ff-panel.firebasestorage.app",
+    messagingSenderId: "28109210766",
+    appId: "1:28109210766:web:18ddc0e885d442f301f5df"
 };
 
 const app = initializeApp(firebaseConfig);
