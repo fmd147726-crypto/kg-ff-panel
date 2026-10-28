@@ -2,13 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCp4Kc-rt3umBsiBXyIIqVgg6cCx0xEsw",
-    authDomain: "kg-ff-panel.firebaseapp.com",
-    databaseURL: "https://kg-ff-panel-default-rtdb.firebaseio.com",
-    projectId: "kg-ff-panel",
-    storageBucket: "kg-ff-panel.firebasestorage.app",
-    messagingSenderId: "28109210766",
-    appId: "1:28109210766:web:18ddc0e885d442f301f5df"
+  apiKey: "AIzaSyCp4Kc-rt3umBsiBXyIIqVgge6CcxOxEsw",
+  authDomain: "kg-ff-panel.firebaseapp.com",
+  databaseURL: "https://kg-ff-panel-default-rtdb.firebaseio.com",
+  projectId: "kg-ff-panel",
+  storageBucket: "kg-ff-panel.firebasestorage.app",
+  messagingSenderId: "28109210766",
+  appId: "1:28109210766:web:18ddc0e885d442f301f5df",
+  measurementId: "G-7GYDLY2H30"
 };
 
 const app = initializeApp(firebaseConfig);
