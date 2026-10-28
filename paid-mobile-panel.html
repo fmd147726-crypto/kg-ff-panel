@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KGFF PANEL - Mobile Premium</title>
+<title>BANGLA FF PANEL - Mobile Premium</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -164,8 +164,8 @@ button{cursor:pointer}
 
 <nav class="navbar">
     <a href="index.html" class="nav-btn"><i class="fas fa-chevron-left mr-1"></i> BACK</a>
-    <div class="orbitron text-white text-lg font-bold tracking-widest">KGFF PANEL</div>
-    <a id="discordBtn" href="https://discord.gg/ZBjSWaF7u" target="_blank" rel="noopener noreferrer" class="nav-btn dynamic-discord">
+    <div class="orbitron text-white text-lg font-bold tracking-widest">BANGLA FF PANEL</div>
+    <a id="discordBtn" href="https://discord.gg/YOUR_DISCORD_INVITE" target="_blank" rel="noopener noreferrer" class="nav-btn">
         <i class="fab fa-discord mr-1"></i> DISCORD
     </a>
 </nav>
@@ -222,8 +222,17 @@ button{cursor:pointer}
     </div>
 </div>
 
-<script>
-const BOT_API_URL = "https://bangla-ff-bot-server.onrender.com/create-ticket";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+    databaseURL: "https://YOUR-PROJECT-ID-default-rtdb.REGION.firebasedatabase.app"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const BOT_API_URL = "https://YOUR-BOT-SERVER.onrender.com/create-ticket";
 
 const $ = id => document.getElementById(id);
 let currentProduct = null;
@@ -233,11 +242,8 @@ let selectedPkgIndex = null;
 let submitting = false;
 
 document.addEventListener("mousemove", event => {
-    const glow = $("mouse-glow");
-    if (glow) {
-        glow.style.setProperty("--x", event.clientX + "px");
-        glow.style.setProperty("--y", event.clientY + "px");
-    }
+    $("mouse-glow").style.setProperty("--x", event.clientX + "px");
+    $("mouse-glow").style.setProperty("--y", event.clientY + "px");
 });
 
 function getVideoId(value) {
@@ -268,6 +274,18 @@ function setVideo(value) {
     section.classList.remove("hidden");
 }
 
+onValue(ref(db, "settings/video_mobile"), snap => setVideo(snap.val()), error => {
+    console.error("Mobile video setting:", error);
+    $("videoSection").classList.add("hidden");
+});
+
+onValue(ref(db, "global_settings/discord_link"), snap => {
+    const value = snap.val();
+    if (typeof value === "string" && /^https:\/\/\S+/i.test(value)) {
+        $("discordBtn").href = value;
+    }
+}, error => console.error("Discord link:", error));
+
 function getPackages(raw) {
     const values = Array.isArray(raw) ? raw : Object.values(raw || {});
     return values.filter(pkg => pkg && typeof pkg === "object");
@@ -285,7 +303,7 @@ function packageDuration(pkg) {
     return pkg.duration ?? pkg.name ?? pkg.title ?? "Package";
 }
 
-function makeCard(product) {
+function makeCard(id, product) {
     const card = document.createElement("article");
     card.className = "product-card";
 
@@ -293,7 +311,7 @@ function makeCard(product) {
     image.className = "product-image";
     image.alt = product.name || product.title || "Mobile Panel";
     image.loading = "lazy";
-    image.src = product.imageUrl || product.image || product.img || product.download ||
+    image.src = product.imageUrl || product.image || product.img ||
         "https://placehold.co/400x200/0d0818/ffffff?text=Mobile+Panel";
     image.onerror = () => {
         image.onerror = null;
@@ -310,36 +328,17 @@ function makeCard(product) {
     const icon = document.createElement("i");
     icon.className = "fas fa-shopping-cart mr-2";
     button.append(icon, document.createTextNode("BUY NOW"));
-    button.addEventListener("click", () => openPurchaseModal(product));
+    button.addEventListener("click", () => openPurchaseModal(id));
 
     card.append(image, title, button);
     return card;
 }
 
-function loadPageData() {
-    // 1. Load Global Discord Link
-    const globalLinks = JSON.parse(localStorage.getItem('kgff_global_links') || '{}');
-    if (globalLinks.discord) {
-        document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = globalLinks.discord);
-    }
-
-    // 2. Load Mobile Settings / Video
-    const settings = JSON.parse(localStorage.getItem('kgff_settings_mobile_panel') || localStorage.getItem('kgff_settings_mobile') || '{}');
-    const vUrl = settings.video_url || settings.yt_link || '';
-    const vEnabled = settings.video_enabled !== false;
-    if (vEnabled && vUrl) {
-        setVideo(vUrl);
-    } else {
-        $("videoSection").classList.add("hidden");
-    }
-
-    // 3. Load Mobile Panels from localStorage
+onValue(ref(db, "mobile_panels"), snapshot => {
     const grid = $("productGrid");
     grid.replaceChildren();
 
-    const items = JSON.parse(localStorage.getItem('kgff_mobile_panels') || localStorage.getItem('kgff_items_mobile_panel') || '[]');
-
-    if (!items || items.length === 0) {
+    if (!snapshot.exists()) {
         const empty = document.createElement("div");
         empty.className = "loading-text";
         empty.textContent = "No Mobile Panel products available right now.";
@@ -347,9 +346,10 @@ function loadPageData() {
         return;
     }
 
-    items.forEach((product) => {
+    snapshot.forEach(child => {
+        const product = child.val();
         if (product && typeof product === "object") {
-            grid.appendChild(makeCard(product));
+            grid.appendChild(makeCard(child.key, product));
         }
     });
 
@@ -359,62 +359,77 @@ function loadPageData() {
         empty.textContent = "No Mobile Panel products available right now.";
         grid.appendChild(empty);
     }
-}
+}, error => {
+    console.error("Firebase mobile_panels read error:", error);
+    $("productGrid").textContent =
+        "Mobile Panels could not be loaded. Check Firebase access and browser Console.";
+});
 
-function openPurchaseModal(product) {
-    currentProduct = product;
-    currentProductId = product.id || product.title;
-    packages = getPackages(product.packages || [{ duration: 'Standard', sell_price: product.price || '0' }]);
-    selectedPkgIndex = null;
+async function openPurchaseModal(id) {
+    try {
+        const snap = await get(ref(db, `mobile_panels/${id}`));
+        if (!snap.exists()) {
+            alert("এই Mobile Panel আর পাওয়া যাচ্ছে না।");
+            return;
+        }
 
-    $("modalProductTitle").textContent = product.name || product.title || "Mobile Panel";
-    $("packageList").replaceChildren();
-    $("customerSection").classList.add("hidden");
-    $("continueBtn").classList.remove("hidden");
-    $("discordUser").value = "";
-    $("createTicketBtn").disabled = false;
-    clearNotice();
+        currentProductId = id;
+        currentProduct = snap.val() || {};
+        packages = getPackages(currentProduct.packages);
+        selectedPkgIndex = null;
 
-    if (!packages.length) {
-        $("packageList").textContent = "এই Product-এর কোনো Package পাওয়া যায়নি।";
-        $("continueBtn").classList.add("hidden");
-    } else {
-        packages.forEach((pkg, index) => {
-            const item = document.createElement("button");
-            item.type = "button";
-            item.className = "package-item";
-            item.setAttribute("aria-pressed", "false");
+        $("modalProductTitle").textContent =
+            currentProduct.name || currentProduct.title || "Mobile Panel";
+        $("packageList").replaceChildren();
+        $("customerSection").classList.add("hidden");
+        $("continueBtn").classList.remove("hidden");
+        $("discordUser").value = "";
+        $("createTicketBtn").disabled = false;
+        clearNotice();
 
-            const info = document.createElement("span");
-            info.className = "package-info";
+        if (!packages.length) {
+            $("packageList").textContent = "এই Product-এর কোনো Package পাওয়া যায়নি।";
+            $("continueBtn").classList.add("hidden");
+        } else {
+            packages.forEach((pkg, index) => {
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = "package-item";
+                item.setAttribute("aria-pressed", "false");
 
-            const clock = document.createElement("i");
-            clock.className = "far fa-clock";
+                const info = document.createElement("span");
+                info.className = "package-info";
 
-            const duration = document.createElement("span");
-            duration.textContent = packageDuration(pkg);
-            info.append(clock, duration);
+                const clock = document.createElement("i");
+                clock.className = "far fa-clock";
 
-            const price = document.createElement("span");
-            price.className = "package-price";
+                const duration = document.createElement("span");
+                duration.textContent = packageDuration(pkg);
+                info.append(clock, duration);
 
-            const oldPrice = packageOldPrice(pkg);
-            const currentPr = packagePrice(pkg);
-            if (oldPrice > currentPr) {
-                const old = document.createElement("span");
-                old.className = "old-price";
-                old.textContent = `৳${oldPrice}`;
-                price.appendChild(old);
-            }
-            price.appendChild(document.createTextNode(`৳${currentPr} BDT`));
+                const price = document.createElement("span");
+                price.className = "package-price";
 
-            item.append(info, price);
-            item.addEventListener("click", () => selectPackage(index));
-            $("packageList").appendChild(item);
-        });
+                const oldPrice = packageOldPrice(pkg);
+                if (oldPrice > packagePrice(pkg)) {
+                    const old = document.createElement("span");
+                    old.className = "old-price";
+                    old.textContent = `৳${oldPrice}`;
+                    price.appendChild(old);
+                }
+                price.appendChild(document.createTextNode(`৳${packagePrice(pkg)} BDT`));
+
+                item.append(info, price);
+                item.addEventListener("click", () => selectPackage(index));
+                $("packageList").appendChild(item);
+            });
+        }
+
+        $("purchaseModal").style.display = "flex";
+    } catch (error) {
+        console.error("Mobile product details:", error);
+        alert("Product details লোড হয়নি। আবার চেষ্টা করুন।");
     }
-
-    $("purchaseModal").style.display = "flex";
 }
 
 function selectPackage(index) {
@@ -555,8 +570,6 @@ document.addEventListener("keydown", event => {
         closeModal();
     }
 });
-
-window.addEventListener('DOMContentLoaded', loadPageData);
 </script>
 </body>
 </html>
