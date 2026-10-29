@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMULATOR - KGFF PANEL</title>
+    <title>EMULATOR - KG FF PANEL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -54,24 +54,27 @@
     <header class="header">
         <a href="index.html" class="brand">
             <img src="logo.png" alt="Logo" class="site-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/888/888879.png'">
-            <div class="brand-text"><h2>KGFF PANEL</h2><p>PREMIUM CORP</p></div>
+            <div class="brand-text"><h2>KG FF PANEL</h2><p>PREMIUM CORP</p></div>
         </a>
         <div class="header-right">
             <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="https://discord.gg/ZBjSWaF7u" target="_blank" class="nav-btn dynamic-discord"><i class="fab fa-discord"></i> <span>Discord</span></a>
+            <a href="#" target="_blank" class="nav-btn dynamic-discord"><i class="fab fa-discord"></i> <span>Discord</span></a>
         </div>
     </header>
 
     <div class="container">
         <div class="top-controls"><a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a></div>
+        
         <div class="video-box" id="videoBox">
             <div class="video-placeholder" id="videoPlaceholder"><i class="fas fa-play-circle"></i> NO VIDEO AVAILABLE</div>
             <iframe id="videoIframe" src="" style="display: none;" allowfullscreen></iframe>
         </div>
+
         <div class="title-row">
             <div class="section-title"><h2>EMULATOR</h2><p>BEST WORKING EMULATOR TOOLS</p></div>
             <a href="#" id="skipBtn" target="_blank" class="skip-btn" style="display: none;"><i class="fas fa-step-forward"></i> HOW TO SKIP</a>
         </div>
+
         <div class="rar-box" id="rarBox" style="display: none;">
             <div class="rar-info">
                 <div class="rar-title"><i class="fas fa-key"></i> RAR PASSWORD</div>
@@ -79,22 +82,41 @@
             </div>
             <button class="copy-btn" onclick="copyPassword()"><i class="fas fa-copy"></i> Copy Password</button>
         </div>
-        <div class="grid" id="itemsGrid"><p style="color: #777; font-size: 13px;">Loading emulators...</p></div>
+
+        <div class="grid" id="itemsGrid">
+            <p style="color: #777; font-size: 13px;">Loading emulators...</p>
+        </div>
     </div>
 
     <footer class="footer"><p>© 2026 KG FF PANEL. All rights reserved.</p></footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { firebaseConfig } from "./firebase-config.js";
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-        const db = getDatabase(initializeApp(firebaseConfig));
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCp4Kc-rt3umBsiBXyIIqVgge6CcxOxEsw",
+            authDomain: "kg-ff-panel.firebaseapp.com",
+            databaseURL: "https://kg-ff-panel-default-rtdb.firebaseio.com",
+            projectId: "kg-ff-panel",
+            storageBucket: "kg-ff-panel.firebasestorage.app",
+            messagingSenderId: "28109210766",
+            appId: "1:28109210766:web:18ddc0e885d442f301f5df",
+            measurementId: "G-7GYDLY2H30"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        onValue(ref(db, 'global_settings/discord_link'), snapshot => {
-            if (snapshot.exists()) document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = snapshot.val());
+        // Load Global Discord Link
+        db.ref('global_settings/discord_link').on('value', snapshot => {
+            if (snapshot.exists()) {
+                document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = snapshot.val());
+            }
         });
 
+        // Convert URL to Embed Format
         function getEmbedUrl(url) {
             if (!url) return null;
             url = url.trim();
@@ -106,22 +128,81 @@
             return url;
         }
 
-        onValue(ref(db, "settings/emulator"), snapshot => {
+        // Load Page Settings (Video, Skip Link, Password)
+        db.ref('page_settings/emulator').on('value', snapshot => {
             const data = snapshot.val() || {};
+            
+            // Video Section
             const embedUrl = getEmbedUrl(data.video_url);
             const iframe = document.getElementById("videoIframe");
             const placeholder = document.getElementById("videoPlaceholder");
-            if (embedUrl) { iframe.src = embedUrl; iframe.style.display = "block"; placeholder.style.display = "none"; }
-            else { iframe.style.display = "none"; placeholder.style.display = "flex"; }
+            const videoBox = document.getElementById("videoBox");
 
+            if (data.video_enabled === false) {
+                videoBox.style.display = "none";
+            } else {
+                videoBox.style.display = "block";
+                if (embedUrl) { 
+                    iframe.src = embedUrl; 
+                    iframe.style.display = "block"; 
+                    placeholder.style.display = "none"; 
+                } else { 
+                    iframe.style.display = "none"; 
+                    placeholder.style.display = "flex"; 
+                }
+            }
+
+            // Skip Button
             const skipBtn = document.getElementById("skipBtn");
-            if (data.how_to_skip && data.how_to_skip.trim() !== "") { skipBtn.href = data.how_to_skip.trim(); skipBtn.style.display = "inline-flex"; }
-            else { skipBtn.style.display = "none"; }
+            if (data.skip_enabled !== false && data.how_to_skip && data.how_to_skip.trim() !== "") { 
+                skipBtn.href = data.how_to_skip.trim(); 
+                skipBtn.style.display = "inline-flex"; 
+            } else { 
+                skipBtn.style.display = "none"; 
+            }
 
+            // RAR Password
             const rarBox = document.getElementById("rarBox");
             const rarPassText = document.getElementById("rarPasswordText");
-            if (data.rar_password && data.rar_password.trim() !== "") { rarPassText.textContent = data.rar_password.trim(); rarBox.style.display = "flex"; }
-            else { rarBox.style.display = "none"; }
+            if (data.rar_password && data.rar_password.trim() !== "") { 
+                rarPassText.textContent = data.rar_password.trim(); 
+                rarBox.style.display = "flex"; 
+            } else { 
+                rarBox.style.display = "none"; 
+            }
         });
 
+        // Load Dynamic Emulator Products Grid
+        db.ref('emulators').on('value', snapshot => {
+            const grid = document.getElementById('itemsGrid');
+            grid.innerHTML = '';
+
+            if (!snapshot.exists()) {
+                grid.innerHTML = '<p style="color: #777; font-size: 13px;">No emulators available right now.</p>';
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const item = child.val();
+                const card = document.createElement('div');
+                card.className = 'emu-card';
+                card.innerHTML = `
+                    <div class="emu-badge">SECURE</div>
+                    <div class="emu-icon"><i class="fas fa-desktop"></i></div>
+                    <div class="emu-title">${item.title}</div>
+                    <a href="${item.download}" target="_blank" class="download-btn"><i class="fas fa-download"></i> Download</a>
+                `;
+                grid.appendChild(card);
+            });
+        });
+
+        // Copy Password Function
         window.copyPassword = function() {
+            const passText = document.getElementById('rarPasswordText').textContent;
+            navigator.clipboard.writeText(passText).then(() => {
+                alert('RAR Password Copied: ' + passText);
+            });
+        };
+    </script>
+</body>
+</html>
