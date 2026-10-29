@@ -514,8 +514,15 @@
 
     </main>
 
-    <!-- LocalStorage Integration Script -->
-    <script>
+    <!-- Firebase Realtime Database Integration Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { firebaseConfig } from "./firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         function getYoutubeId(url) {
             if (!url) return null;
             if (url.includes('youtube.com/shorts/')) return url.split('shorts/')[1].split('?')[0];
@@ -549,9 +556,9 @@
             }
         }
 
-        function loadPageData() {
-            // Load Settings from localStorage (managed by admin dashboard)
-            const settings = JSON.parse(localStorage.getItem('kgff_settings_free_panel') || '{}');
+        // Realtime listener for Free Panel Settings
+        onValue(ref(db, "settings/free_panel"), snapshot => {
+            const settings = snapshot.val() || {};
             handleVideo(settings.video_url, settings.video_enabled !== false);
             
             document.getElementById('rarPasswordVal').innerText = settings.rar_password || '1';
@@ -566,20 +573,39 @@
             } else {
                 skipBtn.style.display = 'none';
             }
+        }, error => console.error("Free panel settings error:", error));
 
-            // Global Discord Link Sync
-            const globalLinks = JSON.parse(localStorage.getItem('kgff_global_links') || '{}');
-            if (globalLinks.discord) {
-                document.querySelectorAll('.dynamic-discord').forEach(el => el.href = globalLinks.discord);
+        // Realtime listener for Global Discord Link
+        onValue(ref(db, "global_settings/discord_link"), snapshot => {
+            const discordLink = snapshot.val();
+            if (typeof discordLink === "string" && discordLink.trim() !== "") {
+                document.querySelectorAll('.dynamic-discord').forEach(el => el.href = discordLink);
             }
+        }, error => console.error("Discord link error:", error));
 
-            // Downloadable Panel Items from localStorage
+        // Realtime listener for Free Panel Items
+        onValue(ref(db, "free_panels"), snapshot => {
             const container = document.getElementById('itemsContainer');
             container.innerHTML = '';
 
-            const items = JSON.parse(localStorage.getItem('kgff_items_free_panel') || '[]');
+            if (!snapshot.exists()) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box-open" style="font-size: 28px; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <p>No Free Panel Available</p>
+                    </div>`;
+                return;
+            }
 
-            if (!items || items.length === 0) {
+            const items = [];
+            snapshot.forEach(child => {
+                const val = child.val();
+                if (val && typeof val === "object") {
+                    items.push(val);
+                }
+            });
+
+            if (items.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-box-open" style="font-size: 28px; margin-bottom: 8px; opacity: 0.5;"></i>
@@ -599,22 +625,28 @@
                         <div class="item-icon"><i class="fas fa-shield-alt"></i></div>
                         <div class="item-info">
                             <div class="item-title">
-                                ${item.title || 'Free Panel'}
+                                ${item.title || item.name || 'Free Panel'}
                                 ${isLatest ? '<span class="badge-latest">LATEST</span>' : ''}
                             </div>
                             <div class="item-sub">OB55 Safe & Anti-Ban Panel</div>
                         </div>
                     </div>
-                    <a href="${item.download || '#'}" target="_blank" class="btn-download">
+                    <a href="${item.download || item.downloadUrl || '#'}" target="_blank" class="btn-download">
                         <i class="fas fa-download"></i> Download
                     </a>
                 `;
                 container.appendChild(card);
             });
-        }
+        }, error => {
+            console.error("Free panels read error:", error);
+            document.getElementById('itemsContainer').innerHTML = `
+                <div class="empty-state">
+                    <p>Failed to load free panels. Check database connection.</p>
+                </div>`;
+        });
 
-        // Copy Password
-        function copyPassword() {
+        // Copy Password Global Function
+        window.copyPassword = function() {
             const passText = document.getElementById('rarPasswordVal').innerText;
             navigator.clipboard.writeText(passText).then(() => {
                 const btn = document.getElementById('copyPassBtn');
@@ -627,10 +659,7 @@
                     btn.style.borderColor = '#ff9900';
                 }, 2000);
             });
-        }
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', loadPageData);
+        };
     </script>
 </body>
 </html>
