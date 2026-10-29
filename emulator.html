@@ -13,12 +13,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-light); min-height: 100vh; overflow-x: hidden; }
-
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px; border-bottom: 1px solid var(--border-color);
-            background: rgba(5, 2, 10, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border-color); background: rgba(5, 2, 10, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; }
         .brand { display: flex; align-items: center; gap: 15px; text-decoration: none; }
         .site-logo { width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--neon-pink); }
         .brand-text h2 { font-size: 15px; color: white; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
@@ -26,34 +21,24 @@
         .header-right { display: flex; gap: 15px; }
         .nav-btn { background: transparent; border: 1px solid #333; color: white; padding: 8px 18px; border-radius: 6px; font-size: 12px; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: bold; transition: 0.3s; }
         .nav-btn:hover { border-color: white; background: rgba(255,255,255,0.05); }
-
         .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
         .top-controls { margin-bottom: 15px; display: flex; }
         .back-btn { background: transparent; border: 1px solid #333; color: white; padding: 8px 20px; border-radius: 6px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
         .back-btn:hover { border-color: white; }
-
         .video-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 30px; position: relative; padding-top: 56.25%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-gray); font-size: 16px; font-weight: bold; flex-direction: column; gap: 15px; }
-
         .title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
         .section-title h2 { font-size: 24px; font-weight: 900; text-transform: uppercase; color: white; margin-bottom: 5px; }
         .section-title p { font-size: 10px; color: var(--text-gray); letter-spacing: 2px; text-transform: uppercase; }
-
-        .skip-btn {
-            background: rgba(0, 204, 102, 0.08); border: 1px solid var(--neon-green); color: var(--neon-green);
-            padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none;
-            display: inline-flex; align-items: center; gap: 8px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s;
-        }
+        .skip-btn { background: rgba(0, 204, 102, 0.08); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; }
         .skip-btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 15px rgba(0, 204, 102, 0.4); }
-
         .rar-box { background: rgba(255, 170, 0, 0.05); border: 1px solid rgba(255, 170, 0, 0.3); padding: 15px 20px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
         .rar-info { display: flex; flex-direction: column; gap: 8px; }
         .rar-title { display: flex; align-items: center; gap: 8px; color: var(--orange-color); font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .rar-pass { font-size: 16px; color: #fff; font-weight: bold; }
         .copy-btn { background: transparent; color: var(--orange-color); border: 1px solid var(--orange-color); padding: 6px 15px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .copy-btn:hover { background: var(--orange-color); color: #000; }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .emu-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column; align-items: flex-start; transition: 0.3s; }
         .emu-card:hover { border-color: var(--neon-purple); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(157, 0, 255, 0.1); }
@@ -62,9 +47,7 @@
         .emu-title { font-size: 13px; font-weight: 800; color: white; margin-bottom: 20px; text-transform: uppercase; word-break: break-word; }
         .download-btn { background: #6b4cff; color: white; padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
         .download-btn:hover { background: #5a3ee0; box-shadow: 0 0 15px rgba(107, 76, 255, 0.4); }
-
         .footer { margin-top: 50px; padding: 30px; text-align: center; font-size: 11px; color: var(--text-gray); border-top: 1px solid var(--border-color); }
-        @media (max-width: 768px) { .header { padding: 15px 20px; } .nav-btn span { display: none; } }
     </style>
 </head>
 <body>
@@ -80,27 +63,15 @@
     </header>
 
     <div class="container">
-        <div class="top-controls">
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
-        </div>
-
+        <div class="top-controls"><a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a></div>
         <div class="video-box" id="videoBox">
-            <div class="video-placeholder" id="videoPlaceholder">
-                <i class="fas fa-play-circle"></i> NO VIDEO AVAILABLE
-            </div>
+            <div class="video-placeholder" id="videoPlaceholder"><i class="fas fa-play-circle"></i> NO VIDEO AVAILABLE</div>
             <iframe id="videoIframe" src="" style="display: none;" allowfullscreen></iframe>
         </div>
-
         <div class="title-row">
-            <div class="section-title">
-                <h2>EMULATOR</h2>
-                <p>BEST WORKING EMULATOR TOOLS</p>
-            </div>
-            <a href="#" id="skipBtn" target="_blank" class="skip-btn" style="display: none;">
-                <i class="fas fa-step-forward"></i> HOW TO SKIP
-            </a>
+            <div class="section-title"><h2>EMULATOR</h2><p>BEST WORKING EMULATOR TOOLS</p></div>
+            <a href="#" id="skipBtn" target="_blank" class="skip-btn" style="display: none;"><i class="fas fa-step-forward"></i> HOW TO SKIP</a>
         </div>
-
         <div class="rar-box" id="rarBox" style="display: none;">
             <div class="rar-info">
                 <div class="rar-title"><i class="fas fa-key"></i> RAR PASSWORD</div>
@@ -108,15 +79,10 @@
             </div>
             <button class="copy-btn" onclick="copyPassword()"><i class="fas fa-copy"></i> Copy Password</button>
         </div>
-
-        <div class="grid" id="itemsGrid">
-            <p style="color: #777; font-size: 13px;">Loading emulators...</p>
-        </div>
+        <div class="grid" id="itemsGrid"><p style="color: #777; font-size: 13px;">Loading emulators...</p></div>
     </div>
 
-    <footer class="footer">
-        <p>© 2026 KG FF PANEL. All rights reserved.</p>
-    </footer>
+    <footer class="footer"><p>© 2026 KG FF PANEL. All rights reserved.</p></footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -126,10 +92,7 @@
         const db = getDatabase(initializeApp(firebaseConfig));
 
         onValue(ref(db, 'global_settings/discord_link'), snapshot => {
-            if (snapshot.exists()) {
-                const link = snapshot.val();
-                document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = link);
-            }
+            if (snapshot.exists()) document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = snapshot.val());
         });
 
         function getEmbedUrl(url) {
@@ -148,21 +111,41 @@
             const embedUrl = getEmbedUrl(data.video_url);
             const iframe = document.getElementById("videoIframe");
             const placeholder = document.getElementById("videoPlaceholder");
-            if (embedUrl) {
-                iframe.src = embedUrl;
-                iframe.style.display = "block";
-                placeholder.style.display = "none";
-            } else {
-                iframe.style.display = "none";
-                placeholder.style.display = "flex";
-            }
+            if (embedUrl) { iframe.src = embedUrl; iframe.style.display = "block"; placeholder.style.display = "none"; }
+            else { iframe.style.display = "none"; placeholder.style.display = "flex"; }
 
             const skipBtn = document.getElementById("skipBtn");
-            if (data.how_to_skip && data.how_to_skip.trim() !== "") {
-                skipBtn.href = data.how_to_skip.trim();
-                skipBtn.style.display = "inline-flex";
-            } else {
-                skipBtn.style.display = "none";
-            }
+            if (data.how_to_skip && data.how_to_skip.trim() !== "") { skipBtn.href = data.how_to_skip.trim(); skipBtn.style.display = "inline-flex"; }
+            else { skipBtn.style.display = "none"; }
 
             const rarBox = document.getElementById("rarBox");
+            const rarPassText = document.getElementById("rarPasswordText");
+            if (data.rar_password && data.rar_password.trim() !== "") { rarPassText.textContent = data.rar_password.trim(); rarBox.style.display = "flex"; }
+            else { rarBox.style.display = "none"; }
+        });
+
+        window.copyPassword = function() {
+            navigator.clipboard.writeText(document.getElementById("rarPasswordText").textContent).then(() => alert("RAR Password copied!"));
+        };
+
+        onValue(ref(db, "emulator"), snapshot => {
+            const grid = document.getElementById("itemsGrid");
+            grid.innerHTML = "";
+            if (!snapshot.exists()) { grid.innerHTML = '<p style="color: #777; font-size: 13px;">No emulator items available.</p>'; return; }
+            snapshot.forEach(child => {
+                const item = child.val();
+                if (item && item.title) {
+                    grid.innerHTML += `
+                        <div class="emu-card">
+                            <div class="emu-badge">EMU</div>
+                            <div class="emu-icon"><i class="fas fa-desktop"></i></div>
+                            <div class="emu-title">${item.title}</div>
+                            <a href="${item.download || '#'}" target="_blank" class="download-btn"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
