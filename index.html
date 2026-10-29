@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-light); min-height: 100vh; overflow-x: hidden; position: relative; display: flex; flex-direction: column; }
 
-        /* Background Glow Effect */
         .bg-glow {
             position: absolute;
             top: 20%;
@@ -31,7 +30,6 @@
             pointer-events: none;
         }
 
-        /* Header / Navbar */
         .header {
             display: flex;
             justify-content: space-between;
@@ -41,7 +39,6 @@
             z-index: 100;
         }
 
-        /* Clickable Logo Section */
         .brand {
             display: flex;
             align-items: center;
@@ -89,7 +86,6 @@
         }
         .header-btn:hover { border-color: white; }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 60px 20px 40px;
@@ -131,7 +127,6 @@
             margin-bottom: 35px;
         }
 
-        /* Action Buttons */
         .hero-actions {
             display: flex;
             justify-content: center;
@@ -168,10 +163,10 @@
             text-decoration: none;
             font-size: 16px;
             transition: 0.3s;
+            cursor: pointer;
         }
         .icon-btn:hover { background: var(--neon-pink); color: white; }
 
-        /* Divider */
         .divider {
             text-align: center;
             margin: 50px 0 40px;
@@ -181,7 +176,6 @@
             text-transform: uppercase;
         }
 
-        /* Grid Cards */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -212,7 +206,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Badges */
         .badge {
             position: absolute;
             top: 15px;
@@ -271,7 +264,49 @@
         }
         .card:hover .explore-btn { background: white; color: black; border-color: white; }
 
-        /* Footer Styling */
+        /* Notification Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #0b0512;
+            border: 1px solid var(--neon-pink);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(255, 0, 102, 0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        .modal-header h3 { font-size: 16px; color: var(--neon-pink); text-transform: uppercase; letter-spacing: 1px; }
+        .close-modal { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+        .notification-item {
+            background: #05020a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        .notif-title { font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #fff; }
+        .notif-msg { font-size: 12px; color: #aaa; line-height: 1.5; }
+        .notif-time { font-size: 9px; color: #555; margin-top: 8px; text-transform: uppercase; }
+
         .footer {
             margin-top: auto;
             padding: 30px 20px;
@@ -295,7 +330,6 @@
 
     <div class="bg-glow"></div>
 
-    <!-- Header Section -->
     <header class="header">
         <a href="index.html" class="brand">
             <img src="logo.png" alt="Logo" class="site-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/888/888879.png'">
@@ -305,13 +339,11 @@
             </div>
         </a>
 
-        <!-- এখানে dynamic-discord ক্লাস যোগ করা হয়েছে -->
         <a href="https://discord.gg/ZBjSWaF7u" target="_blank" class="header-btn dynamic-discord">
             <i class="fab fa-discord"></i> Join Discord
         </a>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="status-badge">
             <i class="fas fa-circle"></i> LIVE SERVER ACTIVE
@@ -321,25 +353,21 @@
         <p class="hero-subtitle">NEXT GEN PRIVATE SOLUTIONS • SECURE • RELIABLE</p>
 
         <div class="hero-actions">
-            <!-- এখানে dynamic-discord ক্লাস যোগ করা হয়েছে -->
             <a href="https://discord.gg/ZBjSWaF7u" target="_blank" class="action-btn dynamic-discord">
                 <i class="fab fa-discord"></i> Join Support Discord →
             </a>
             <a href="https://rijuedit.github.io/oxi-topup/" target="_blank" class="action-btn">
                 <i class="fas fa-gem"></i> Free Fire Diamond Topup →
             </a>
-            <a href="#" class="icon-btn">
+            <button class="icon-btn" id="openNotifications" title="View Notifications">
                 <i class="fas fa-bell"></i>
-            </a>
+            </button>
         </div>
     </section>
 
     <div class="divider">// AVAILABLE SYSTEMS //</div>
 
-    <!-- Main Grid Cards -->
     <div class="grid-container" id="category-grid">
-        
-        <!-- Free Panel -->
         <a href="free-panel.html" class="card" id="card_free_panel">
             <div class="badge badge-hot">HOT</div>
             <div class="card-icon" id="icon_free_panel">💻</div>
@@ -348,7 +376,6 @@
             <div class="explore-btn">EXPLORE →</div>
         </a>
 
-        <!-- Free Bypass -->
         <a href="free-bypass.html" class="card" id="card_free_bypass">
             <div class="card-icon" id="icon_free_bypass">💻</div>
             <div class="card-title" id="title_free_bypass">FREE BYPASS</div>
@@ -356,7 +383,6 @@
             <div class="explore-btn">EXPLORE →</div>
         </a>
 
-        <!-- Emulator -->
         <a href="emulator.html" class="card" id="card_emulator">
             <div class="card-icon" id="icon_emulator"><i class="far fa-star"></i></div>
             <div class="card-title" id="title_emulator">EMULATOR</div>
@@ -364,7 +390,6 @@
             <div class="explore-btn">EXPLORE →</div>
         </a>
 
-        <!-- Free Fire APK -->
         <a href="free-fire-apk.html" class="card" id="card_apk">
             <div class="card-icon" id="icon_apk"><i class="fas fa-bolt"></i></div>
             <div class="card-title" id="title_apk">FREE FIRE APK</div>
@@ -372,7 +397,6 @@
             <div class="explore-btn">EXPLORE →</div>
         </a>
 
-        <!-- Buy PC Panel -->
         <a href="pc-paid-panel.html" class="card" id="card_pc_panel">
             <div class="badge badge-premium">PREMIUM</div>
             <div class="card-icon" id="icon_pc_panel"><i class="fas fa-desktop"></i></div>
@@ -381,7 +405,6 @@
             <div class="explore-btn">EXPLORE →</div>
         </a>
 
-        <!-- Buy Mobile Panel -->
         <a href="paid-mobile-panel.html" class="card" id="card_mobile_panel">
             <div class="badge badge-vip">VIP</div>
             <div class="card-icon" id="icon_mobile_panel"><i class="fas fa-mobile-alt"></i></div>
@@ -389,32 +412,34 @@
             <div class="card-desc">SAFE VIP PANEL FOR ANDROID/IOS</div>
             <div class="explore-btn">EXPLORE →</div>
         </a>
-
     </div>
 
-    <!-- Footer -->
+    <!-- Notification Modal Popup -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-bell"></i> Announcements</h3>
+                <button class="close-modal" id="closeNotifications">&times;</button>
+            </div>
+            <div id="notificationsList">
+                <p style="color: #777; font-size: 13px; text-align: center; padding: 20px;">Loading notifications...</p>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <p>© 2026 KG FF PANEL. All rights reserved.</p>
     </footer>
 
-    <!-- Firebase Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { firebaseConfig } from "./firebase-config.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDOFL6dKvw_RfyKMe3QQgvE4lt7Gtc4yaM",
-            authDomain: "bangla-ff-admin.firebaseapp.com",
-            databaseURL: "https://bangla-ff-admin-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "bangla-ff-admin",
-            storageBucket: "bangla-ff-admin.firebasestorage.app",
-            messagingSenderId: "295013484465",
-            appId: "1:295013484465:web:b6bc2a949e239095761f90"
-        };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- Discord Auto Link Fetcher ---
+        // Discord Auto Link Fetcher
         onValue(ref(db, 'global_settings/discord_link'), (snapshot) => {
             if (snapshot.exists()) {
                 const link = snapshot.val();
@@ -423,9 +448,46 @@
                 });
             }
         });
-        // ----------------------------------------------
 
-        // Smart Icon Renderer (FontAwesome + Emoji + Image)
+        // Notifications Modal Toggle
+        const modal = document.getElementById('notificationModal');
+        document.getElementById('openNotifications').addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+        document.getElementById('closeNotifications').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+
+        // Fetch Notifications live from Firebase
+        onValue(ref(db, 'notifications'), (snapshot) => {
+            const listContainer = document.getElementById('notificationsList');
+            listContainer.innerHTML = '';
+
+            if (!snapshot.exists()) {
+                listContainer.innerHTML = '<p style="color: #777; font-size: 13px; text-align: center; padding: 20px;">No notifications available.</p>';
+                return;
+            }
+
+            const notifications = [];
+            snapshot.forEach(child => {
+                notifications.push(child.val());
+            });
+
+            // Show latest notifications first
+            notifications.reverse().forEach(item => {
+                listContainer.innerHTML += `
+                    <div class="notification-item">
+                        <div class="notif-title">${item.title || 'Notice'}</div>
+                        <div class="notif-msg">${item.message || ''}</div>
+                        <div class="notif-time">${item.time || ''}</div>
+                    </div>
+                `;
+            });
+        });
+
         function renderIcon(iconDiv, data) {
             if (!iconDiv || !data) return;
             const val = (data.iconValue || '').trim();
@@ -434,10 +496,8 @@
             if (data.iconType === 'image' || val.startsWith('http')) {
                 iconDiv.innerHTML = `<img src="${val}" alt="icon">`;
             } else if (data.iconType === 'emoji' || (!val.includes('fa-') && !val.startsWith('http'))) {
-                // Direct emoji or plain text
                 iconDiv.innerHTML = `<span>${val}</span>`;
             } else {
-                // FontAwesome class
                 iconDiv.innerHTML = `<i class="${val}"></i>`;
             }
         }
@@ -445,7 +505,6 @@
         const keys = ['free_panel', 'free_bypass', 'emulator', 'apk', 'pc_panel', 'mobile_panel'];
         
         keys.forEach(key => {
-            // Visibility Toggle
             onValue(ref(db, `site_visibility/${key}`), s => {
                 const isVisible = !s.exists() || s.val() === true;
                 const card = document.getElementById(`card_${key}`);
@@ -455,7 +514,6 @@
                 }
             });
 
-            // Title + Icon Sync from Admin
             onValue(ref(db, `site_settings/categories/${key}`), s => {
                 if (s.exists()) {
                     const data = s.val();
