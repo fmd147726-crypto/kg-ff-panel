@@ -58,20 +58,23 @@
         </a>
         <div class="header-right">
             <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="https://discord.gg/ZBjSWaF7u" target="_blank" class="nav-btn dynamic-discord"><i class="fab fa-discord"></i> <span>Discord</span></a>
+            <a href="#" target="_blank" class="nav-btn dynamic-discord"><i class="fab fa-discord"></i> <span>Discord</span></a>
         </div>
     </header>
 
     <div class="container">
         <div class="top-controls"><a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a></div>
+        
         <div class="video-box" id="videoBox">
             <div class="video-placeholder" id="videoPlaceholder"><i class="fas fa-play-circle"></i> NO VIDEO AVAILABLE</div>
             <iframe id="videoIframe" src="" style="display: none;" allowfullscreen></iframe>
         </div>
+
         <div class="title-row">
             <div class="section-title"><h2>FREE BYPASS</h2><p>SAFE & SECURE BYPASS TOOLS</p></div>
             <a href="#" id="skipBtn" target="_blank" class="skip-btn" style="display: none;"><i class="fas fa-step-forward"></i> HOW TO SKIP</a>
         </div>
+
         <div class="rar-box" id="rarBox" style="display: none;">
             <div class="rar-info">
                 <div class="rar-title"><i class="fas fa-key"></i> RAR PASSWORD</div>
@@ -79,7 +82,10 @@
             </div>
             <button class="copy-btn" onclick="copyPassword()"><i class="fas fa-copy"></i> Copy Password</button>
         </div>
-        <div class="grid" id="itemsGrid"><p style="color: #777; font-size: 13px;">Loading bypass items...</p></div>
+
+        <div class="grid" id="itemsGrid">
+            <p style="color: #777; font-size: 13px;">Loading bypass items...</p>
+        </div>
     </div>
 
     <footer class="footer"><p>© 2026 KG FF PANEL. All rights reserved.</p></footer>
@@ -106,22 +112,45 @@
             return url;
         }
 
-        onValue(ref(db, "settings/free_bypass"), snapshot => {
+        // FIXED PATH: Changed from settings/free_bypass to page_settings/free_bypass to match admin panel
+        onValue(ref(db, "page_settings/free_bypass"), snapshot => {
             const data = snapshot.val() || {};
+            
             const embedUrl = getEmbedUrl(data.video_url);
             const iframe = document.getElementById("videoIframe");
             const placeholder = document.getElementById("videoPlaceholder");
-            if (embedUrl) { iframe.src = embedUrl; iframe.style.display = "block"; placeholder.style.display = "none"; }
-            else { iframe.style.display = "none"; placeholder.style.display = "flex"; }
+            const videoBox = document.getElementById("videoBox");
+
+            if (data.video_enabled === false) {
+                videoBox.style.display = "none";
+            } else {
+                videoBox.style.display = "block";
+                if (embedUrl) { 
+                    iframe.src = embedUrl; 
+                    iframe.style.display = "block"; 
+                    placeholder.style.display = "none"; 
+                } else { 
+                    iframe.style.display = "none"; 
+                    placeholder.style.display = "flex"; 
+                }
+            }
 
             const skipBtn = document.getElementById("skipBtn");
-            if (data.how_to_skip && data.how_to_skip.trim() !== "") { skipBtn.href = data.how_to_skip.trim(); skipBtn.style.display = "inline-flex"; }
-            else { skipBtn.style.display = "none"; }
+            if (data.skip_enabled !== false && data.how_to_skip && data.how_to_skip.trim() !== "") { 
+                skipBtn.href = data.how_to_skip.trim(); 
+                skipBtn.style.display = "inline-flex"; 
+            } else { 
+                skipBtn.style.display = "none"; 
+            }
 
             const rarBox = document.getElementById("rarBox");
             const rarPassText = document.getElementById("rarPasswordText");
-            if (data.rar_password && data.rar_password.trim() !== "") { rarPassText.textContent = data.rar_password.trim(); rarBox.style.display = "flex"; }
-            else { rarBox.style.display = "none"; }
+            if (data.rar_password && data.rar_password.trim() !== "") { 
+                rarPassText.textContent = data.rar_password.trim(); 
+                rarBox.style.display = "flex"; 
+            } else { 
+                rarBox.style.display = "none"; 
+            }
         });
 
         window.copyPassword = function() {
@@ -131,7 +160,10 @@
         onValue(ref(db, "free_bypass"), snapshot => {
             const grid = document.getElementById("itemsGrid");
             grid.innerHTML = "";
-            if (!snapshot.exists()) { grid.innerHTML = '<p style="color: #777; font-size: 13px;">No bypass items available.</p>'; return; }
+            if (!snapshot.exists()) { 
+                grid.innerHTML = '<p style="color: #777; font-size: 13px;">No bypass items available.</p>'; 
+                return; 
+            }
             snapshot.forEach(child => {
                 const item = child.val();
                 if (item && item.title) {
