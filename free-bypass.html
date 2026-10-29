@@ -82,7 +82,7 @@
         .emu-card:hover { border-color: var(--neon-purple); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(157, 0, 255, 0.1); }
         .emu-badge { position: absolute; top: 20px; right: 20px; background: rgba(157, 0, 255, 0.1); color: var(--neon-purple); border: 1px solid rgba(157, 0, 255, 0.3); font-size: 9px; padding: 4px 10px; border-radius: 20px; font-weight: bold; }
         .emu-icon { width: 45px; height: 45px; background: rgba(157, 0, 255, 0.05); border: 1px solid rgba(157, 0, 255, 0.2); color: var(--neon-purple); display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 20px; margin-bottom: 20px; }
-        .emu-title { font-size: 13px; font-weight: 800; color: white; margin-bottom: 20px; text-transform: uppercase; }
+        .emu-title { font-size: 13px; font-weight: 800; color: white; margin-bottom: 20px; text-transform: uppercase; word-break: break-word; }
         .download-btn { background: #6b4cff; color: white; padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
         .download-btn:hover { background: #5a3ee0; box-shadow: 0 0 15px rgba(107, 76, 255, 0.4); }
 
@@ -126,4 +126,145 @@
             </a>
         </div>
 
-        <div class="rar-box" id="rarBox" style="display
+        <div class="rar-box" id="rarBox" style="display: none;">
+            <div class="rar-info">
+                <div class="rar-title"><i class="fas fa-key"></i> RAR PASSWORD</div>
+                <div class="rar-pass" id="rarPasswordText">-</div>
+            </div>
+            <button class="copy-btn" onclick="copyPassword()"><i class="fas fa-copy"></i> Copy Password</button>
+        </div>
+
+        <div class="grid" id="itemsGrid">
+            <p style="color: #777; font-size: 13px;">Loading bypass items...</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 KG FF PANEL. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { firebaseConfig } from "./firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Mouse glow effect
+        document.addEventListener("mousemove", e => {
+            const glow = document.getElementById("mouse-glow-global");
+            if (glow) {
+                glow.style.left = e.clientX + "px";
+                glow.style.top = e.clientY + "px";
+            }
+        });
+
+        // Discord Dynamic Link
+        onValue(ref(db, 'global_settings/discord_link'), snapshot => {
+            if (snapshot.exists()) {
+                const link = snapshot.val();
+                document.querySelectorAll('.dynamic-discord').forEach(btn => btn.href = link);
+            }
+        });
+
+        // Parse YouTube / Drive video URLs
+        function getEmbedUrl(url) {
+            if (!url) return null;
+            url = url.trim();
+            if (url.includes("youtube.com") || url.includes("youtu.be")) {
+                let videoId = "";
+                if (url.includes("youtu.be/")) {
+                    videoId = url.split("youtu.be/")[1]?.split("?")[0];
+                } else if (url.includes("watch?v=")) {
+                    videoId = url.split("watch?v=")[1]?.split("&")[0];
+                } else if (url.includes("embed/")) {
+                    videoId = url.split("embed/")[1]?.split("?")[0];
+                }
+                if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+            }
+            if (url.includes("drive.google.com")) {
+                return url.replace("/view", "/preview").replace("/edit", "/preview");
+            }
+            return url;
+        }
+
+        // Load Settings (Video, Skip Link, RAR Password)
+        onValue(ref(db, "settings/free_bypass"), snapshot => {
+            const data = snapshot.val() || {};
+            
+            // Video
+            const embedUrl = getEmbedUrl(data.video_url);
+            const iframe = document.getElementById("videoIframe");
+            const placeholder = document.getElementById("videoPlaceholder");
+            if (embedUrl) {
+                iframe.src = embedUrl;
+                iframe.style.display = "block";
+                placeholder.style.display = "none";
+            } else {
+                iframe.style.display = "none";
+                placeholder.style.display = "flex";
+            }
+
+            // Skip Link
+            const skipBtn = document.getElementById("skipBtn");
+            if (data.how_to_skip && data.how_to_skip.trim() !== "") {
+                skipBtn.href = data.how_to_skip.trim();
+                skipBtn.style.display = "inline-flex";
+            } else {
+                skipBtn.style.display = "none";
+            }
+
+            // RAR Password
+            const rarBox = document.getElementById("rarBox");
+            const rarPassText = document.getElementById("rarPasswordText");
+            if (data.rar_password && data.rar_password.trim() !== "") {
+                rarPassText.textContent = data.rar_password.trim();
+                rarBox.style.display = "flex";
+            } else {
+                rarBox.style.display = "none";
+            }
+        });
+
+        // Copy Password Functionality
+        window.copyPassword = function() {
+            const text = document.getElementById("rarPasswordText").textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("RAR Password copied to clipboard!");
+            });
+        };
+
+        // Load Free Bypass Items from Firebase
+        onValue(ref(db, "free_bypass"), snapshot => {
+            const grid = document.getElementById("itemsGrid");
+            grid.innerHTML = "";
+
+            if (!snapshot.exists()) {
+                grid.innerHTML = '<p style="color: #777; font-size: 13px;">No bypass items available right now.</p>';
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const item = child.val();
+                if (item && item.title) {
+                    const downloadLink = item.download || item.download_link || "#";
+                    grid.innerHTML += `
+                        <div class="emu-card">
+                            <div class="emu-badge">FREE</div>
+                            <div class="emu-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="emu-title">${item.title}</div>
+                            <a href="${downloadLink}" target="_blank" class="download-btn">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        </div>
+                    `;
+                }
+            });
+
+            if (grid.innerHTML === "") {
+                grid.innerHTML = '<p style="color: #777; font-size: 13px;">No bypass items available right now.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
