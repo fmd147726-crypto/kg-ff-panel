@@ -143,7 +143,14 @@
         </div>
     </main>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { firebaseConfig } from "./firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         function getYoutubeId(url) {
             if (!url) return null;
             if (url.includes('youtube.com/shorts/')) return url.split('shorts/')[1].split('?')[0];
@@ -172,9 +179,9 @@
             }
         }
 
-        function loadPageData() {
-            // Load Settings from localStorage (managed by admin dashboard)
-            const settings = JSON.parse(localStorage.getItem('kgff_settings_emulator') || '{}');
+        // Realtime listener for Emulator Settings
+        onValue(ref(db, "settings/emulator"), snapshot => {
+            const settings = snapshot.val() || {};
             handleVideo(settings.video_url, settings.video_enabled !== false);
             document.getElementById('rarPasswordVal').innerText = settings.rar_password || '1';
             
@@ -188,20 +195,35 @@
             } else {
                 skipBtn.style.display = 'none';
             }
+        }, error => console.error("Emulator settings error:", error));
 
-            // Global Discord Link Sync
-            const globalLinks = JSON.parse(localStorage.getItem('kgff_global_links') || '{}');
-            if (globalLinks.discord) {
-                document.querySelectorAll('.dynamic-discord').forEach(el => el.href = globalLinks.discord);
+        // Realtime listener for Global Discord Link
+        onValue(ref(db, "global_settings/discord_link"), snapshot => {
+            const discordLink = snapshot.val();
+            if (typeof discordLink === "string" && discordLink.trim() !== "") {
+                document.querySelectorAll('.dynamic-discord').forEach(el => el.href = discordLink);
             }
+        }, error => console.error("Discord link error:", error));
 
-            // Load Emulator Items from localStorage
+        // Realtime listener for Emulator Items Grid
+        onValue(ref(db, "emulators"), snapshot => {
             const container = document.getElementById('itemsContainer');
             container.innerHTML = '';
             
-            const items = JSON.parse(localStorage.getItem('kgff_items_emulator') || '[]');
-            
-            if (!items || items.length === 0) {
+            if (!snapshot.exists()) {
+                container.innerHTML = `<div class="empty-state"><p>No Emulator Available</p></div>`;
+                return;
+            }
+
+            const items = [];
+            snapshot.forEach(child => {
+                const val = child.val();
+                if (val && typeof val === "object") {
+                    items.push(val);
+                }
+            });
+
+            if (items.length === 0) {
                 container.innerHTML = `<div class="empty-state"><p>No Emulator Available</p></div>`;
                 return;
             }
@@ -215,27 +237,27 @@
                     <div class="item-left">
                         <div class="item-icon"><i class="fas fa-desktop"></i></div>
                         <div>
-                            <div style="font-weight: 700; color:#fff;">${item.title || 'Emulator'} ${index === 0 ? '<span class="badge-latest">LATEST</span>' : ''}</div>
+                            <div style="font-weight: 700; color:#fff;">${item.title || item.name || 'Emulator'} ${index === 0 ? '<span class="badge-latest">LATEST</span>' : ''}</div>
                             <div style="font-size: 12px; color: #77688a;">Bypass Ready Version</div>
                         </div>
                     </div>
-                    <a href="${item.download || '#'}" target="_blank" class="btn-download"><i class="fas fa-download"></i> Download</a>
+                    <a href="${item.download || item.downloadUrl || '#'}" target="_blank" class="btn-download"><i class="fas fa-download"></i> Download</a>
                 `;
                 container.appendChild(card);
             });
-        }
+        }, error => {
+            console.error("Emulator read error:", error);
+            document.getElementById('itemsContainer').innerHTML = `<div class="empty-state"><p>Failed to load emulators.</p></div>`;
+        });
 
-        function copyPassword() {
+        window.copyPassword = function() {
             const passText = document.getElementById('rarPasswordVal').innerText;
             navigator.clipboard.writeText(passText).then(() => {
                 const btn = document.getElementById('copyPassBtn');
                 btn.innerHTML = '<i class="fas fa-check"></i> Copied!'; btn.style.color = '#00cc66';
                 setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; btn.style.color = '#ff9900'; }, 2000);
             });
-        }
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', loadPageData);
+        };
     </script>
 </body>
 </html>
