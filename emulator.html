@@ -125,27 +125,3 @@
         });
 
         window.copyPassword = function() {
-            navigator.clipboard.writeText(document.getElementById("rarPasswordText").textContent).then(() => alert("RAR Password copied!"));
-        };
-
-        onValue(ref(db, "emulator"), snapshot => {
-            const grid = document.getElementById("itemsGrid");
-            grid.innerHTML = "";
-            if (!snapshot.exists()) { grid.innerHTML = '<p style="color: #777; font-size: 13px;">No emulator items available.</p>'; return; }
-            snapshot.forEach(child => {
-                const item = child.val();
-                if (item && item.title) {
-                    grid.innerHTML += `
-                        <div class="emu-card">
-                            <div class="emu-badge">EMU</div>
-                            <div class="emu-icon"><i class="fas fa-desktop"></i></div>
-                            <div class="emu-title">${item.title}</div>
-                            <a href="${item.download || '#'}" target="_blank" class="download-btn"><i class="fas fa-download"></i> Download</a>
-                        </div>
-                    `;
-                }
-            });
-        });
-    </script>
-</body>
-</html>
