@@ -39,14 +39,77 @@
         .rar-pass { font-size: 16px; color: #fff; font-weight: bold; }
         .copy-btn { background: transparent; color: var(--orange-color); border: 1px solid var(--orange-color); padding: 6px 15px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .copy-btn:hover { background: var(--orange-color); color: #000; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .emu-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column; align-items: flex-start; transition: 0.3s; }
-        .emu-card:hover { border-color: var(--neon-purple); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(157, 0, 255, 0.1); }
-        .emu-badge { position: absolute; top: 20px; right: 20px; background: rgba(157, 0, 255, 0.1); color: var(--neon-purple); border: 1px solid rgba(157, 0, 255, 0.3); font-size: 9px; padding: 4px 10px; border-radius: 20px; font-weight: bold; }
-        .emu-icon { width: 45px; height: 45px; background: rgba(157, 0, 255, 0.05); border: 1px solid rgba(157, 0, 255, 0.2); color: var(--neon-purple); display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 20px; margin-bottom: 20px; }
-        .emu-title { font-size: 13px; font-weight: 800; color: white; margin-bottom: 20px; text-transform: uppercase; word-break: break-word; }
-        .download-btn { background: #6b4cff; color: white; padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .download-btn:hover { background: #5a3ee0; box-shadow: 0 0 15px rgba(107, 76, 255, 0.4); }
+        
+        /* Updated Grid & Horizontal Row Card Layout */
+        .grid { display: flex; flex-direction: column; gap: 15px; }
+        .emu-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 20px; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 15px; 
+            transition: 0.3s; 
+        }
+        .emu-card:hover { 
+            border-color: var(--neon-purple); 
+            box-shadow: 0 5px 20px rgba(157, 0, 255, 0.1); 
+        }
+        .emu-card-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .emu-badge { 
+            background: rgba(157, 0, 255, 0.1); 
+            color: var(--neon-purple); 
+            border: 1px solid rgba(157, 0, 255, 0.3); 
+            font-size: 9px; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+        }
+        .emu-icon { 
+            width: 45px; 
+            height: 45px; 
+            background: rgba(157, 0, 255, 0.05); 
+            border: 1px solid rgba(157, 0, 255, 0.2); 
+            color: var(--neon-purple); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 10px; 
+            font-size: 20px; 
+            flex-shrink: 0;
+        }
+        .emu-title { 
+            font-size: 14px; 
+            font-weight: 800; 
+            color: white; 
+            text-transform: uppercase; 
+            word-break: break-word; 
+        }
+        .download-btn { 
+            background: #ff0066; 
+            color: white; 
+            padding: 10px 22px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: 0.3s; 
+            flex-shrink: 0;
+        }
+        .download-btn:hover { 
+            background: #e6005c; 
+            box-shadow: 0 0 15px rgba(255, 0, 102, 0.4); 
+        }
         .footer { margin-top: 50px; padding: 30px; text-align: center; font-size: 11px; color: var(--text-gray); border-top: 1px solid var(--border-color); }
     </style>
 </head>
@@ -112,7 +175,6 @@
             return url;
         }
 
-        // FIXED PATH: Changed from settings/free_bypass to page_settings/free_bypass to match admin panel
         onValue(ref(db, "page_settings/free_bypass"), snapshot => {
             const data = snapshot.val() || {};
             
@@ -169,10 +231,14 @@
                 if (item && item.title) {
                     grid.innerHTML += `
                         <div class="emu-card">
-                            <div class="emu-badge">BYPASS</div>
-                            <div class="emu-icon"><i class="fas fa-shield-alt"></i></div>
-                            <div class="emu-title">${item.title}</div>
-                            <a href="${item.download || '#'}" target="_blank" class="download-btn"><i class="fas fa-download"></i> Download</a>
+                            <div class="emu-card-left">
+                                <div class="emu-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div class="emu-title">${item.title}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div class="emu-badge">BYPASS</div>
+                                <a href="${item.download || '#'}" target="_blank" class="download-btn"><i class="fas fa-download"></i> Download</a>
+                            </div>
                         </div>
                     `;
                 }
