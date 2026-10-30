@@ -106,16 +106,16 @@
             return url;
         }
 
-        onValue(ref(db, "settings/free_fire_apk"), snapshot => {
+        onValue(ref(db, "ff_apk_page"), snapshot => {
             const data = snapshot.val() || {};
             const embedUrl = getEmbedUrl(data.video_url);
             const iframe = document.getElementById("videoIframe");
             const placeholder = document.getElementById("videoPlaceholder");
-            if (embedUrl) { iframe.src = embedUrl; iframe.style.display = "block"; placeholder.style.display = "none"; }
+            if (embedUrl && data.video_enabled !== false) { iframe.src = embedUrl; iframe.style.display = "block"; placeholder.style.display = "none"; }
             else { iframe.style.display = "none"; placeholder.style.display = "flex"; }
 
             const skipBtn = document.getElementById("skipBtn");
-            if (data.how_to_skip && data.how_to_skip.trim() !== "") { skipBtn.href = data.how_to_skip.trim(); skipBtn.style.display = "inline-flex"; }
+            if (data.how_to_skip && data.how_to_skip.trim() !== "" && data.skip_enabled !== false) { skipBtn.href = data.how_to_skip.trim(); skipBtn.style.display = "inline-flex"; }
             else { skipBtn.style.display = "none"; }
 
             const rarBox = document.getElementById("rarBox");
@@ -128,7 +128,8 @@
             navigator.clipboard.writeText(document.getElementById("rarPasswordText").textContent).then(() => alert("RAR Password copied!"));
         };
 
-        onValue(ref(db, "free_fire_apk"), snapshot => {
+        // Corrected path matching the admin panel code ("apks")
+        onValue(ref(db, "apks"), snapshot => {
             const grid = document.getElementById("itemsGrid");
             grid.innerHTML = "";
             if (!snapshot.exists()) { grid.innerHTML = '<p style="color: #777; font-size: 13px;">No APK items available.</p>'; return; }
